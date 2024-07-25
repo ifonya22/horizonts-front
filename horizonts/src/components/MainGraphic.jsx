@@ -9,56 +9,98 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { DatePicker, Space, message } from 'antd';
+const { RangePicker } = DatePicker;
+import { Typography } from "antd";
+const { Title } = Typography;
 
-const fetchData = async () => {
-  const response = await fetch('http://localhost:8000/api/v1/statistic/last_hour', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: JSON.stringify({
-      factory_id: 0,
-      start_date: "2024-05-18",
-      end_date: "2024-05-18",
-    }),
-  });
+const onOk = (value) => {
+  console.log('onOk: ', value);
+};
 
-  const data = await response.json();
-  return data.last_hour;
+const fetchData = async (factoryId) => {
+  try {
+    const response = await fetch(
+      "http://localhost:8000/api/v1/statistic/last_hour",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          factory_id: factoryId,
+          start_date: "2024-07-25",
+          end_date: "2024-07-26",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.last_hour;
+  } catch (error) {
+    message.error(`Ошибка при загрузке данных: ${error.message}`);
+    console.error('Fetch error:', error);
+    return [];
+  }
 };
 
 const transformData = (data) => {
-  return data.map(item => ({
-    name: item.minute, // Используем минуту как имя для оси X
+  return data.map((item) => ({
+    name: item.minute,
     "Реальные данные": item.total_capacity,
   }));
 };
 
-const MainGraphic = () => {
+const MainGraphic = ({ factoryId }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
-      const apiData = await fetchData();
-      const transformedData = transformData(apiData);
-      setData(transformedData);
+      if (factoryId) {
+        const apiData = await fetchData(factoryId);
+        const transformedData = transformData(apiData);
+        setData(transformedData);
+      }
     };
 
     loadData();
-  }, []);
+  }, [factoryId]);
 
   return (
     <div
+      className="shadow-md border border-gray-200"
       style={{
-        border: "1px solid gray",
         padding: "10px",
         borderRadius: "5px",
-        width: "80%",
-        height: "400px",
+        width: "850px",
+        height: "420px",
       }}
     >
-      <ResponsiveContainer width="100%" height="100%">
+      {/* <div className="mx-20 flex gap-10 margin-bottom">
+        <RangePicker
+          showTime={{
+            format: "HH:mm",
+          }}
+          format="YYYY-MM-DD HH:mm"
+          onChange={(value, dateString) => {
+            console.log("Selected Time: ", value);
+            console.log("Formatted Selected Time: ", dateString);
+          }}
+          onOk={onOk}
+        />
+      </div> */}
+
+      <div>
+        <Title level={5} className="text-center">График потребления эл. энергии за последний час</Title>
+
+      </div>
+      
+      <ResponsiveContainer width="100%" height="80%" style={{ marginTop: "20px" }}>
         <LineChart
           data={data}
           margin={{

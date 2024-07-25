@@ -3,22 +3,24 @@ from sqlalchemy import Column, Date, Float, Integer, String, Time
 from database.database import Base
 
 
-class Statistic(Base):
-    __tablename__ = "statistic"
+class Statistics(Base):
+    __tablename__ = "statistics"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    date_ = Column(Date, nullable=False)
-    time_ = Column(Time, nullable=False)
-    capacity = Column(Float, nullable=False)
-    id_phider = Column(Integer, nullable=False)
+    id_stc = Column(Integer, primary_key=True, autoincrement=True)
+    date_stc = Column(Date, nullable=False)
+    time_stc = Column(Time, nullable=False)
+    power_stc = Column(Float, nullable=False)
+    id_obj_stc = Column(Integer, nullable=False)
+    id_type_stc = Column(String, nullable=False)
 
     def __repr__(self):
         return (
-            f"Statistic(id={self.id}, "
-            f"date_={self.date_}, "
-            f"time_={self.time_}, "
-            f"capacity={self.capacity}, "
-            f"id_phider={self.id_phider})"
+            f"Statistics(id={self.id_stc}, "
+            f"date_stc={self.date_stc}, "
+            f"time_stc={self.time_stc}, "
+            f"power_stc={self.power_stc}, "
+            f"id_obj_stc={self.id_obj_stc})"
+            f"id_type_stc={self.id_type_stc})"
         )
 
 

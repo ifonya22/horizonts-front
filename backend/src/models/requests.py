@@ -6,9 +6,15 @@ from datetime import datetime
 class StatisticRequest:
     factory_id: int
     start_date: datetime
+    end_date: datetime
 
     def __post_init__(self):
-        self.start_date_str = self.start_date.strftime("%Y-%m-%d")
+        self.start_date_str, self.start_time = self.start_date.strftime(
+            "%Y-%m-%d"
+        ), self.start_date.strftime("%H:%M:%S")
+        self.end_date, self.end_time = self.start_date.strftime(
+            "%Y-%m-%d"
+        ), self.start_date.strftime("%H:%M:%S")
 
     def to_dict(self):
         return {

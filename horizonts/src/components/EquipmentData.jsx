@@ -43,7 +43,7 @@ const EquipmentData = () => {
       {[...Array(3)].map((_, index) => (
         <div key={index} style={{ marginBottom: "10px" }}>
           <Dropdown
-            menu={menu}
+            overlay={menu}
             trigger={["click"]}
             onOpenChange={(flag) => handleOpenChange(index, flag)}
             open={openDropdown === index}
@@ -55,7 +55,7 @@ const EquipmentData = () => {
                 borderColor: "#d9d9d9",
               }}
             >
-              Агрегат {index + 1}
+              Оборудование {index + 1}
             </Button>
           </Dropdown>
           {openDropdown === index && (
