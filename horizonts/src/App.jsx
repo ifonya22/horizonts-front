@@ -1,8 +1,8 @@
 import { Menu } from "antd";
 import DataCard from "./components/DataCard";
 import CriticalEventCard from "./components/CriticalEventCard";
-import Graphic from "./components/Graphic";
-import EquipmentGraphics from "./components/EquipmentGraphics";
+import MainGraphic from "./components/MainGraphic";
+import EquipmentData from "./components/EquipmentData";
 import { Typography } from "antd";
 const { Title } = Typography;
 
@@ -55,7 +55,7 @@ const App = () => {
           </div>
         </div>
         <div className="container my-10">
-          <Graphic/>
+          <MainGraphic/>
         </div>
         <div className="mx-auto flex gap-5">
           <DataCard />
@@ -63,7 +63,7 @@ const App = () => {
         </div>
       </div>
       <div>
-        <EquipmentGraphics/>
+        <EquipmentData/>
       </div>
     </div>
   );

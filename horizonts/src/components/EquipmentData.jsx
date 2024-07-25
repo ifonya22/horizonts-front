@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Dropdown, Menu } from "antd";
 
-const EquipmentGraphics = () => {
+const EquipmentData = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const handleOpenChange = (index, flag) => {
@@ -13,12 +13,25 @@ const EquipmentGraphics = () => {
       <Menu.Item>
         <div style={{ display: "flex", alignItems: "center" }}>
           <img
-            src="https://via.placeholder.com/150" // Замените на URL вашего изображения
+            src="https://via.placeholder.com/350" // Замените на URL вашего изображения
             alt="Sample"
-            style={{ width: "150px", height: "auto", marginRight: "10px" }}
+            style={{ width: "auto", height: "auto", marginRight: "10px" }}
           />
           <span>
-            Это пример текста, который будет отображаться справа от изображения.
+            <p>Время простоя: </p>
+            <p>Критических событий: </p>
+            <p>Неопределенное время: </p>
+            <p>Потребление эл. энергии: </p>
+            <p>Критическая мощность: </p>
+            <Button
+              style={{
+                backgroundColor: "#fff",
+                color: "#000",
+                borderColor: "#d9d9d9",
+              }}
+            >
+             Подробнее
+            </Button>
           </span>
         </div>
       </Menu.Item>
@@ -54,4 +67,4 @@ const EquipmentGraphics = () => {
   );
 };
 
-export default EquipmentGraphics;
+export default EquipmentData;

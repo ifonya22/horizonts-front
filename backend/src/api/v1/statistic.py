@@ -13,7 +13,7 @@ def get_statistics_orm(
 ):
     results = get_statistics_results(db, request)
     return {
-        "answer": [
+        "last_hour": [
             {
                 "minute": result.minute,
                 "total_capacity": result.total_capacity,

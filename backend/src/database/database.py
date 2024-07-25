@@ -6,7 +6,7 @@ Base = declarative_base()
 
 
 engine = create_engine(
-    "mysql+pymysql://user:userpassword@localhost:3306/horizons_stat"
+    "mysql+pymysql://user:userpassword@localhost:8888/horizons_stat"
 )
 Base.metadata.create_all(engine)
 

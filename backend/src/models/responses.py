@@ -8,4 +8,4 @@ class CapacityPerMinute(BaseModel):
 
 
 class StatisticResponse(BaseModel):
-    answer: List[CapacityPerMinute]
+    last_hour: List[CapacityPerMinute]

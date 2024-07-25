@@ -25,7 +25,7 @@ const fetchData = async () => {
   });
 
   const data = await response.json();
-  return data.answer;
+  return data.last_hour;
 };
 
 const transformData = (data) => {
@@ -35,7 +35,7 @@ const transformData = (data) => {
   }));
 };
 
-const Graphic = () => {
+const MainGraphic = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -85,4 +85,4 @@ const Graphic = () => {
   );
 };
 
-export default Graphic;
+export default MainGraphic;
