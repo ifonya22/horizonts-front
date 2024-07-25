@@ -3,7 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.endpoints import api_router
 
-app = FastAPI()
+PORT = 8000
+
+app = FastAPI(
+    title="Horizonts",
+    description="Horizonts API",
+    version="0.5.1",
+    servers=[{"url": f"http://localhost:{PORT}"}],
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,4 +25,4 @@ app.include_router(api_router)
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
