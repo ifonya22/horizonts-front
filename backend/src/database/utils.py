@@ -1,4 +1,4 @@
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from database.database import SessionLocal
 from database.models import Statistic
@@ -30,3 +30,16 @@ def get_statistics_results(db, request):
     )
 
     return results
+
+
+def get_factory_standstill_status(db, factory_id):
+    sql = f"""
+    SELECT SUM(TIMESTAMPDIFF(SECOND, CONCAT(s.date_status, ' ', s.time_begin),
+    CONCAT(s.date_status, ' ', s.time_end))) / 3600 AS total_simple_status_time_hours
+    FROM status AS s JOIN phider AS p ON s.id_phider = p.id_phider
+    JOIN workshop_phider AS wp ON p.id_phider = wp.id_phider
+    JOIN factory AS f ON wp.id_factory = f.id_factory
+    WHERE s.type_status = 'Простой' AND f.id_factory = {factory_id};"""
+    result = db.execute(text(sql)).scalar()
+
+    return result

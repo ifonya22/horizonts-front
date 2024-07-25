@@ -15,3 +15,8 @@ class StatisticRequest:
             "factory_id": self.factory_id,
             "start_date": self.start_date_str,
         }
+
+
+@dataclass
+class StandstillRequest:
+    factory_id: int
