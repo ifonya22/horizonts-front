@@ -10,7 +10,7 @@ services:
       - db
     environment:
       DATABASE_URL: "mysql+pymysql://user:userpassword@db:3306/horizons_stat"
-      TIMEZONE: "Europe/Moscow"
+      TIMEZONE: "Asia/Yekaterinburg"
 
   db:
     image: mysql:8.0
