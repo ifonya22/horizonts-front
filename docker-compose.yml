@@ -35,5 +35,13 @@ services:
       PMA_USER: user
       PMA_PASSWORD: userpassword
 
+  frontend:
+    build: ./horizonts
+    container_name: horizons_web_front
+    ports:
+      - "3000:5000"
+    depends_on:
+      - backend
+
 volumes:
   db_data_new:
