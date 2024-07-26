@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta
-from sqlalchemy import func, text
+import os
+from sqlalchemy import text
 
 from database.database import SessionLocal
-from database.models import Statistics
+
+
+TIMEZONE = os.environ.get("TIMEZONE")  # Europe/Moscow
 
 
 def get_db():
@@ -14,24 +17,20 @@ def get_db():
 
 
 def get_statistics_results(db, request):
-    results = (
-        db.query(
-            func.date_format(Statistics.time_stc, "%H:%i").label("minute"),
-            func.sum(Statistics.power_stc).label("total_capacity"),
-        )
-        .filter(
-            Statistics.id_obj_stc == request.factory_id,
-            Statistics.date_stc == request.start_date,  # "2024-05-18"
-            Statistics.time_stc.between(
-                func.subtime(func.curtime(), "06:00:00"), func.curtime()
-            ),
-        )
-        .group_by("minute")
-        .order_by("minute")
-        .all()
+    sql = f"""
+    SELECT DATE_FORMAT(time_stc, '%H:%i') AS minute, SUM(power_stc) AS total_capacity
+    FROM statistics
+    WHERE date_stc = :date AND id_obj_stc = :firm_id
+    AND time_stc BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}'), '02:00:00') AND CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}')
+    GROUP BY minute ORDER BY minute;
+    """
+
+    print(sql)
+    result = db.execute(
+        text(sql), {"firm_id": request.factory_id, "date": request.start_date}
     )
 
-    return results
+    return result
 
 
 def get_firm_critical_count(db, firm_id, date):

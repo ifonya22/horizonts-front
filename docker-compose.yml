@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  backend:
+    build: ./backend
+    container_name: horizons_web_back
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "mysql+pymysql://user:userpassword@db:3306/horizons_stat"
+      TIMEZONE: "Europe/Moscow"
+
   db:
     image: mysql:8.0
     restart: always

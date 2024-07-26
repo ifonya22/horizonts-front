@@ -20,6 +20,10 @@ const onOk = (value) => {
 
 const fetchData = async (factoryId) => {
   try {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    console.log(formattedDate);
+
     const response = await fetch(
       "http://localhost:8000/api/v1/statistic/last_hour",
       {
@@ -30,7 +34,7 @@ const fetchData = async (factoryId) => {
         },
         body: JSON.stringify({
           factory_id: factoryId,
-          start_date: "2024-07-25",
+          start_date: formattedDate,
           end_date: "2024-07-26",
         }),
       }
@@ -121,6 +125,7 @@ const MainGraphic = ({ factoryId }) => {
             stroke="#8884d8"
             activeDot={{ r: 8 }}
           />
+          {/* <Line type="monotone" dataKey="Реальные данные" stroke="#82ca9d" /> */}
         </LineChart>
       </ResponsiveContainer>
     </div>

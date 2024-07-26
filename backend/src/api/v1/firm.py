@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from database.utils import (
+from database.queries import (
     get_all_firms_names,
     get_db,
     get_firm_critical_count,

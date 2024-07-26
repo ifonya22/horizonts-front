@@ -42,7 +42,7 @@ const CriticalEventCard = ({ factoryId }) =>  {
     className="shadow-md border border-gray-200"
     title={
       <div className='flex items-center'>
-        <img src='' alt='Логотип' className="w-10 h-10 mr-2" />
+        <img src='https://via.placeholder.com/25' alt='Логотип' className="w-10 h-10 mr-2" />
         <span className='mx-auto'>Критические события за сутки</span>
       </div>
     }

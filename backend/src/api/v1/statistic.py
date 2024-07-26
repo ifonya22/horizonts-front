@@ -1,4 +1,4 @@
-from database.utils import get_db, get_statistics_results
+from database.queries import get_db, get_statistics_results
 from fastapi import APIRouter, Depends
 from models.requests import StatisticRequest
 from models.responses import StatisticResponse
