@@ -5,33 +5,11 @@ import CriticalEventCard from "../components/CriticalEventCard";
 import MainGraphic from "../components/MainGraphic";
 import EquipmentData from "../components/EquipmentData";
 import FactoryButton from "../components/FactoryButton";
+import LeftMenu from "../components/LeftMenu";
 // import { Typography } from "antd";
 
 const { Title } = Typography;
 
-const items = [
-  {
-    key: "grp",
-    label: "",
-    type: "group",
-    children: [
-      {
-        key: "1",
-        label: "Статистика",
-      },
-      {
-        type: "divider",
-      },
-      {
-        key: "2",
-        label: "Настройки",
-      },
-      {
-        type: "divider",
-      },
-    ],
-  },
-];
 
 import { Menu, Dropdown, Button, Space, message, Typography } from 'antd';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
@@ -48,24 +26,12 @@ const Statistic = () => {
     console.log("Выбранный ID завода:", id);
   };
 
-  const onClick = (e) => {
-    console.log("click ", e);
-  };
+
 
   return (
     <div className="flex">
-      <Menu
-        onClick={onClick}
-        style={{
-          width: 256,
-        }}
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
-        mode="inline"
-        items={items}
-        className="h-screen"
-      />
-  
+
+      <LeftMenu />
       <div>
         <div className="mx-auto flex">
           <div className="mx-10 flex gap-4">
