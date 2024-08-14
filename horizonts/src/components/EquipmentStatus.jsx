@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Collapse, Row, Col, Radio, Button } from 'antd';
 import { Line } from '@ant-design/plots';
 import axios from 'axios';
+import EquipmentModal from './EquipmentModal'; 
 
 const { Panel } = Collapse;
 
@@ -9,13 +10,14 @@ const EquipmentStatus = () => {
   const [selectedShop, setSelectedShop] = useState('Все');
   const [shopsData, setShopsData] = useState([]);
   const [equipmentData, setEquipmentData] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState(null);
 
   useEffect(() => {
-    // Загружаем данные для всех цехов при загрузке компонента
     const fetchData = async () => {
       const result = await axios.get('http://localhost:8000/api/v1/firm/1/workshops/');
-      setShopsData(result.data.shops);  // Сохраняем данные о цехах
-      setEquipmentData(result.data.shops);  // Показываем оборудование для всех цехов по умолчанию
+      setShopsData(result.data.shops);
+      setEquipmentData(result.data.shops);
     };
     fetchData();
   }, []);
@@ -31,6 +33,16 @@ const EquipmentStatus = () => {
       const result = await axios.get(`http://localhost:8000/api/v1/firm/1/${shopId}`);
       setEquipmentData([result.data]);
     }
+  };
+
+  const showModal = (equipment) => {
+    setSelectedEquipment(equipment);
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setSelectedEquipment(null);
   };
 
   return (
@@ -66,7 +78,7 @@ const EquipmentStatus = () => {
                     smooth: true,
                     color: '#72b3f9',
                   }} />
-                  <Button type="primary" style={{ marginTop: 16 }}>
+                  <Button type="primary" style={{ marginTop: 16 }} onClick={() => showModal(equipment)}>
                     Подробнее
                   </Button>
                 </Panel>
@@ -75,6 +87,14 @@ const EquipmentStatus = () => {
           ))
         ))}
       </Row>
+
+      {selectedEquipment && (
+        <EquipmentModal
+          isVisible={isModalVisible}
+          onClose={handleCancel}
+          equipment={selectedEquipment}
+        />
+      )}
     </div>
   );
 };

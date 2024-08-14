@@ -15,7 +15,7 @@ services:
 
   db:
     image: mysql:8.0
-    restart: always
+    # restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: horizons_stat
@@ -28,7 +28,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    restart: always
+    # restart: always
     ports:
       - "8080:80"
     environment:
@@ -43,6 +43,12 @@ services:
       - "3000:5000"
     depends_on:
       - backend
+
+  db_filler:
+    build: ./scripts
+    container_name: horizons_db_filler
+    depends_on:
+      - db
 
 volumes:
   db_data_new:
