@@ -7,18 +7,22 @@ const { Text } = Typography;
 
 const userName = "Иван Иванов Иванович"; // ФИО пользователя
 
-const menu = (
-  <Menu>
-    <Menu.Item key="profile" icon={<ProfileOutlined />}>
-      Посмотреть профиль
-    </Menu.Item>
-    <Menu.Item key="logout" icon={<LogoutOutlined />}>
-      Выйти из аккаунта
-    </Menu.Item>
-  </Menu>
-);
+const Header = ({ setIsAuthenticated }) => {
+  const handleLogout = () => {
+    setIsAuthenticated(false); 
+  };
 
-const Header = () => {
+  const menu = (
+    <Menu>
+      <Menu.Item key="profile" icon={<ProfileOutlined />}>
+        Посмотреть профиль
+      </Menu.Item>
+      <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
+        Выйти из аккаунта
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <AntHeader style={{ backgroundColor: '#f57838', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
       <div>
