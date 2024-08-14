@@ -1,5 +1,7 @@
 import LeftMenu from "../components/LeftMenu";
 import { Card, Typography, Button, Flex } from "antd";
+import FirmsList from "../components/FirmsList";
+
 const { Title } = Typography;
 const Settings = () => {
   return (
@@ -35,9 +37,17 @@ const Settings = () => {
                 }
                 }
             >
-                <div className="flex">
-                <Title level={3}>Предприятия</Title>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Title level={3}>Предприятия</Title>
+                  </div>
+                <div className="ml-auto">
                 <Button >Добавить предприятие</Button>
+                </div>
+                
+                </div>
+                <div>
+                  <FirmsList />
                 </div>
             </Card>
             </div>

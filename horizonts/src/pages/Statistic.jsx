@@ -6,6 +6,7 @@ import MainGraphic from "../components/MainGraphic";
 import EquipmentData from "../components/EquipmentData";
 import FactoryButton from "../components/FactoryButton";
 import LeftMenu from "../components/LeftMenu";
+import EquipmentStatus from "../components/EquipmentStatus";
 // import { Typography } from "antd";
 
 const { Title } = Typography;
@@ -53,9 +54,9 @@ const Statistic = () => {
           </div>
         </div>
       </div>
-      {/* <div style={{ marginTop: "200px", marginLeft: "50px" }}>
-        <EquipmentData />
-      </div> */}
+      <div style={{ marginTop: "200px", marginLeft: "50px" }}>
+        <EquipmentStatus />
+      </div>
     </div>
   );
 };
