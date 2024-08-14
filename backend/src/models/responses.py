@@ -9,3 +9,4 @@ class CapacityPerMinute(BaseModel):
 
 class StatisticResponse(BaseModel):
     last_hour: List[CapacityPerMinute]
+    prediction: List[CapacityPerMinute]

@@ -63,19 +63,19 @@ async def save_predictions(obj, pool, predictions):
                     type_pr = "Norm"
 
                 # Проверяем наличие записи по часам и минутам
-                check_query = """SELECT id_pr FROM PREDICTOR
+                check_query = """SELECT id_pr FROM predictor
                                  WHERE HOUR(time_pr) = HOUR(%s) AND MINUTE(time_pr) = MINUTE(%s) AND id_obj_pr = %s"""
                 await cursor.execute(check_query, (time_pr, time_pr, obj['id_obj']))
                 existing_record = await cursor.fetchone()
 
                 if existing_record:
                     # Обновляем существующую запись
-                    update_query = """UPDATE PREDICTOR SET power_pr = %s, type_pr = %s
+                    update_query = """UPDATE predictor SET power_pr = %s, type_pr = %s
                                       WHERE id_pr = %s"""
                     await cursor.execute(update_query, (power, type_pr, existing_record[0]))
                 else:
                     # Вставляем новую запись
-                    insert_query = """INSERT INTO PREDICTOR (date_pr, time_pr, power_pr, id_obj_pr, type_pr)
+                    insert_query = """INSERT INTO predictor (date_pr, time_pr, power_pr, id_obj_pr, type_pr)
                                       VALUES (%s, %s, %s, %s, %s)"""
                     await cursor.execute(insert_query, (date_pr, time_pr, power, obj['id_obj'], type_pr))
             await connection.commit()

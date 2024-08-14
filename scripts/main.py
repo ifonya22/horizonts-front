@@ -4,7 +4,7 @@ from shared_data import USER_, PASSWORD_, HOST_, PORT_, DB_, SLEEP_
 from status import status
 from generator import rand_capacity
 from input import input_data
-# from predictor import predict_capacity
+from predictor import predict_capacity
 
 async def main():
     while True:
@@ -25,7 +25,7 @@ async def main():
                 asyncio.create_task(status(obj, pool))  # Запускаем status параллельно
 
                 # Прогнозируем мощность на следующие 30 минут и сохраняем в базу данных
-                # await predict_capacity(obj, pool)
+                await predict_capacity(obj, pool)
 
             # Параллельный запуск sleep
             await asyncio.sleep(SLEEP_)  # Ждем завершения sleep

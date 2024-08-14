@@ -45,19 +45,47 @@ const fetchData = async (factoryId) => {
     }
 
     const data = await response.json();
-    return data.last_hour;
+    return {
+      lastHour: data.last_hour,
+      prediction: data.prediction
+    };
   } catch (error) {
     message.error(`Ошибка при загрузке данных: ${error.message}`);
     console.error('Fetch error:', error);
-    return [];
+    return {
+      lastHour: [],
+      prediction: []
+    };
   }
 };
 
 const transformData = (data) => {
-  return data.map((item) => ({
-    name: item.minute,
-    "Реальные данные": item.total_capacity,
-  }));
+  const { lastHour, prediction } = data;
+
+
+  const mergedData = {};
+
+  lastHour.forEach((item) => {
+    mergedData[item.minute] = {
+      name: item.minute,
+      "Реальные данные": item.total_capacity,
+      "Прогноз": null 
+    };
+  });
+
+  prediction.forEach((item) => {
+    if (mergedData[item.minute]) {
+      mergedData[item.minute]["Прогноз"] = item.total_capacity;
+    } else {
+      mergedData[item.minute] = {
+        name: item.minute,
+        "Реальные данные": null, 
+        "Прогноз": item.total_capacity
+      };
+    }
+  });
+
+  return Object.values(mergedData);
 };
 
 const MainGraphic = ({ factoryId }) => {
@@ -85,23 +113,10 @@ const MainGraphic = ({ factoryId }) => {
         height: "420px",
       }}
     >
-      {/* <div className="mx-20 flex gap-10 margin-bottom">
-        <RangePicker
-          showTime={{
-            format: "HH:mm",
-          }}
-          format="YYYY-MM-DD HH:mm"
-          onChange={(value, dateString) => {
-            console.log("Selected Time: ", value);
-            console.log("Formatted Selected Time: ", dateString);
-          }}
-          onOk={onOk}
-        />
-      </div> */}
-
       <div>
-        <Title level={5} className="text-center">График потребления эл. энергии за последний час</Title>
-
+        <Title level={5} className="text-center">
+          График потребления эл. энергии за последний час
+        </Title>
       </div>
       
       <ResponsiveContainer width="100%" height="80%" style={{ marginTop: "20px" }}>
@@ -125,7 +140,12 @@ const MainGraphic = ({ factoryId }) => {
             stroke="#8884d8"
             activeDot={{ r: 8 }}
           />
-          {/* <Line type="monotone" dataKey="Реальные данные" stroke="#82ca9d" /> */}
+          <Line
+            type="monotone"
+            dataKey="Прогноз"
+            stroke="#82ca9d"
+            activeDot={{ r: 8 }}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>

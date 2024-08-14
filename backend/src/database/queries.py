@@ -33,6 +33,23 @@ def get_statistics_results(db, request):
     return result
 
 
+def get_statistics_prediction(db, request):
+    sql = f"""
+    SELECT DATE_FORMAT(time_pr, '%H:%i') AS minute, SUM(power_pr) AS total_capacity
+    FROM predictor
+    WHERE date_pr = :date AND id_obj_pr = :firm_id
+    AND time_pr BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}'), '02:00:00') AND CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}')
+    GROUP BY minute ORDER BY minute;
+    """
+
+    print(sql)
+    result = db.execute(
+        text(sql), {"firm_id": request.factory_id, "date": request.start_date}
+    )
+
+    return result
+
+
 def get_firm_critical_count(db, firm_id, date):
     sql = f"""
     SELECT COUNT(*)

@@ -12,11 +12,13 @@
   "dependencies": {
     "@ant-design/charts": "^2.1.2",
     "antd": "^5.19.3",
+    "axios": "^1.7.4",
     "moment": "^2.30.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-is": "^18.3.1",
     "react-router-dom": "^6.26.0",
+    "react-zoom-pan-pinch": "^3.6.1",
     "recharts": "^2.12.7"
   },
   "devDependencies": {
