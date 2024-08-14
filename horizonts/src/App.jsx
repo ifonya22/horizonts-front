@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout } from 'antd';
+import { Layout, ConfigProvider } from 'antd';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header'; // Импортируем наш Header
 import Statistic from './pages/Statistic';
@@ -10,6 +10,13 @@ const { Content } = Layout;
 
 const App = () => {
   return (
+    <ConfigProvider
+    theme={{
+      token: {
+        colorPrimary: '#f57838',
+      }
+    }}
+  >
     <Router>
       <Layout>
         <Header /> 
@@ -22,6 +29,7 @@ const App = () => {
         </Content>
       </Layout>
     </Router>
+    </ConfigProvider>
   );
 };
 

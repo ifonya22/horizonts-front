@@ -22,7 +22,7 @@ const Header = () => {
   return (
     <AntHeader style={{ backgroundColor: '#f57838', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
       <div>
-        <Text style={{ color: '#fff', fontSize: '20px' }}>Название</Text>
+        <Text style={{ color: '#fff', fontSize: '26px' }}>Мониторинг электроэнергии</Text>
       </div>
       <div>
         <Dropdown overlay={menu} trigger={['click']}>

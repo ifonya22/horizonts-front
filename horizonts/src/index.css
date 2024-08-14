@@ -7,6 +7,17 @@
   height: 400px;
   min-width: 350px;
 }
+.ant-menu-item-selected {
+  background-color: #f57838 !important;
+}
+
+:where(.css-dev-only-do-not-override-165rco3) .ant-pagination-item-active {
+  border-color: #f57838 !important;  
+}
+
+:where(.css-dev-only-do-not-override-165rco3).ant-pagination .ant-pagination-item-active a {
+  color: #000000 !important;
+}
 /* .menu-style {
 
   height: 100vh;

@@ -1,4 +1,4 @@
-import { Menu } from "antd";
+import { ConfigProvider, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -11,6 +11,8 @@ const LeftMenu = () => {
       setSelectedKey("1");
     } else if (location.pathname === "/history") {
       setSelectedKey("2");
+    } else if (location.pathname === "/settings") {
+      setSelectedKey("3");
     }
 
   }, [location.pathname]);
@@ -47,6 +49,20 @@ const LeftMenu = () => {
   ];
 
   return (
+    <ConfigProvider
+    theme={{
+      components: {
+        Menu: {
+          // horizontalItemSelectedColor: '#f57838',
+          // horizontalItemHoverColor: '#fff',
+          itemSelectedColor: '#fff',
+          // colorPrimaryBorder: '#fff',
+          // itemActiveBg: '#f57838',
+          
+        },
+      },
+    }}
+  >
     <Menu
       selectedKeys={[selectedKey]}
       style={{
@@ -56,6 +72,7 @@ const LeftMenu = () => {
       items={items}
       className="h-screen"
     />
+    </ConfigProvider>
   );
 };
 

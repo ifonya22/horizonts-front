@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Table, Tag } from "antd";
+import { Card, Table, ConfigProvider } from "antd";
 const columns = [
   {
     title: "Время",
@@ -88,7 +88,21 @@ const HistoryTable = () => {
         //   width: 300,
         }}
       >
-        <Table columns={columns} dataSource={data} />
+        <ConfigProvider
+    theme={{
+      components: {
+        Table: {
+          // horizontalItemSelectedColor: '#f57838',
+          // horizontalItemHoverColor: '#fff',
+          rowSelectedHoverBg: '#fff',
+          // colorPrimaryBorder: '#fff',
+          // itemActiveBg: '#f57838',
+          
+        },
+      },
+    }}
+  ><Table columns={columns} dataSource={data} /></ConfigProvider>
+        
       </Card>
     </div>
   );
