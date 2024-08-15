@@ -40,8 +40,8 @@ const Statistic = () => {
             <FactoryButton onSelect={handleFactorySelect} />
           </div>
         </div>
-        <div className="pl-10">
-          <div className="container my-10">
+        <div className="pl-20">
+          <div className="container my-20">
             <MainGraphic factoryId={selectedFactoryId} />
           </div>
           <div className="mx-auto flex gap-20 mt-16">

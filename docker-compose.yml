@@ -49,6 +49,11 @@ services:
     container_name: horizons_db_filler
     depends_on:
       - db
+    environment:
+      - TZ=Europe/Moscow
+    command: ["poetry", "run", "python", "main.py"]
+
+    
 
 volumes:
   db_data_new:

@@ -1,27 +1,42 @@
 import React, { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import { DatePicker, Space, message } from 'antd';
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title as ChartTitle,
+  Tooltip as ChartTooltip,
+  Legend as ChartLegend,
+} from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom"; // Импорт плагина для зума и панорамирования
+import { DatePicker, message } from "antd";
 const { RangePicker } = DatePicker;
 import { Typography } from "antd";
+
 const { Title } = Typography;
 
+// Регистрируем все необходимые компоненты Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ChartTitle,
+  ChartTooltip,
+  ChartLegend,
+  zoomPlugin // Регистрируем плагин для зума и панорамирования
+);
+
 const onOk = (value) => {
-  console.log('onOk: ', value);
+  console.log("onOk: ", value);
 };
 
 const fetchData = async (factoryId) => {
   try {
     const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().split('T')[0];
+    const formattedDate = currentDate.toISOString().split("T")[0];
     console.log(formattedDate);
 
     const response = await fetch(
@@ -47,14 +62,14 @@ const fetchData = async (factoryId) => {
     const data = await response.json();
     return {
       lastHour: data.last_hour,
-      prediction: data.prediction
+      prediction: data.prediction,
     };
   } catch (error) {
     message.error(`Ошибка при загрузке данных: ${error.message}`);
-    console.error('Fetch error:', error);
+    console.error("Fetch error:", error);
     return {
       lastHour: [],
-      prediction: []
+      prediction: [],
     };
   }
 };
@@ -62,30 +77,38 @@ const fetchData = async (factoryId) => {
 const transformData = (data) => {
   const { lastHour, prediction } = data;
 
-
   const mergedData = {};
 
   lastHour.forEach((item) => {
     mergedData[item.minute] = {
       name: item.minute,
-      "Реальные данные": item.total_capacity,
-      "Прогноз": null 
+      realData: item.total_capacity,
+      prediction: null 
     };
   });
 
   prediction.forEach((item) => {
     if (mergedData[item.minute]) {
-      mergedData[item.minute]["Прогноз"] = item.total_capacity;
+      mergedData[item.minute].prediction = item.total_capacity;
     } else {
       mergedData[item.minute] = {
         name: item.minute,
-        "Реальные данные": null, 
-        "Прогноз": item.total_capacity
+        realData: null, 
+        prediction: item.total_capacity
       };
     }
   });
 
-  return Object.values(mergedData);
+  // Преобразуем данные в массив и сортируем
+  const sortedData = Object.values(mergedData).sort((a, b) => {
+    // Преобразование времени в формат, который можно сравнивать
+    const [aHour, aMinute] = a.name.split(":").map(Number);
+    const [bHour, bMinute] = b.name.split(":").map(Number);
+
+    return aHour !== bHour ? aHour - bHour : aMinute - bMinute;
+  });
+
+  return sortedData;
 };
 
 const MainGraphic = ({ factoryId }) => {
@@ -103,6 +126,57 @@ const MainGraphic = ({ factoryId }) => {
     loadData();
   }, [factoryId]);
 
+  const chartData = {
+    labels: data.map((item) => item.name),
+    datasets: [
+      {
+        label: "Реальные данные",
+        data: data.map((item) => item.realData),
+        borderColor: "#8884d8",
+        fill: false,
+      },
+      {
+        label: "Прогноз",
+        data: data.map((item) => item.prediction),
+        borderColor: "#82ca9d",
+        fill: false,
+      },
+    ],
+  };
+
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: "xy", // Панорамирование как по X, так и по Y осям
+        },
+        zoom: {
+          enabled: true,
+          mode: "xy", // Зумирование как по X, так и по Y осям
+          speed: 0.1, // Скорость зума
+        },
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Время",
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Потребление",
+        },
+      },
+    },
+  };
+  
+
   return (
     <div
       className="shadow-md border border-gray-200"
@@ -118,36 +192,8 @@ const MainGraphic = ({ factoryId }) => {
           График потребления эл. энергии за последний час
         </Title>
       </div>
-      
-      <ResponsiveContainer width="100%" height="80%" style={{ marginTop: "20px" }}>
-        <LineChart
-          data={data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="Реальные данные"
-            stroke="#8884d8"
-            activeDot={{ r: 8 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="Прогноз"
-            stroke="#82ca9d"
-            activeDot={{ r: 8 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+
+      <Line data={chartData} options={chartOptions} />
     </div>
   );
 };
