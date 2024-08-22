@@ -5,11 +5,10 @@ import { UserOutlined, LogoutOutlined, ProfileOutlined } from '@ant-design/icons
 const { Header: AntHeader } = Layout;
 const { Text } = Typography;
 
-const userName = "Иван Иванов Иванович"; // ФИО пользователя
-
-const Header = ({ setIsAuthenticated }) => {
+const Header = ({ setIsAuthenticated, userFullName }) => {
   const handleLogout = () => {
-    setIsAuthenticated(false); 
+    localStorage.removeItem('isAuthenticated');
+    setIsAuthenticated(false);
   };
 
   const menu = (
@@ -29,11 +28,13 @@ const Header = ({ setIsAuthenticated }) => {
         <Text style={{ color: '#fff', fontSize: '26px' }}>Мониторинг электроэнергии</Text>
       </div>
       <div>
-        <Dropdown overlay={menu} trigger={['click']}>
-          <a href="/" onClick={e => e.preventDefault()} style={{ color: '#fff' }}>
-            {userName} <UserOutlined />
-          </a>
-        </Dropdown>
+        {userFullName && (
+          <Dropdown overlay={menu} trigger={['click']}>
+            <a href="/" onClick={e => e.preventDefault()} style={{ color: '#fff' }}>
+              {userFullName} <UserOutlined />
+            </a>
+          </Dropdown>
+        )}
       </div>
     </AntHeader>
   );

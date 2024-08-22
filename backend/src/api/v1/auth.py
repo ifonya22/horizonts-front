@@ -3,8 +3,9 @@ from datetime import timedelta
 from core.auth import (
     authenticate_user,
     create_access_token,
-    get_current_user,
     get_password_hash,
+    get_user_from_token,
+    oauth2_scheme,
 )
 from database import models
 from database.queries import get_db
@@ -37,11 +38,11 @@ async def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users/me", response_model=user_schema.UserResponse)
+@router.get("/users/me", response_model=user_schema.UserSchema)
 async def read_users_me(
-    current_user: user_schema.UserResponse = Depends(get_current_user),
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
-    return current_user
+    return get_user_from_token(token, db)
 
 
 @router.post("/users/", response_model=user_schema.UserResponse)

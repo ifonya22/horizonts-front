@@ -26,3 +26,9 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str | None = None
+
+
+class UserSchema(BaseModel):
+    username: str
+    full_name: str | None = None
+    email: str | None = None

@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, message } from 'antd';
 import axios from 'axios';
 
-const Login = ({ setIsAuthenticated }) => {
+const Login = ({ setIsAuthenticated, setUserFullName }) => {
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
@@ -16,9 +16,9 @@ const Login = ({ setIsAuthenticated }) => {
         grant_type: 'password',
         username: username,
         password: password,
-        scope: '',              
-        client_id: '',           
-        client_secret: '',       
+        scope: '',
+        client_id: '',
+        client_secret: '',
       }), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -26,9 +26,24 @@ const Login = ({ setIsAuthenticated }) => {
       });
 
       if (response.status === 200) {
+        const { access_token } = response.data;
+        localStorage.setItem('access_token', access_token);
 
-        setIsAuthenticated(true);
-        message.success('Успешный вход!');
+        const userResponse = await axios.get('http://localhost:8000/api/v1/auth/users/me', {
+          headers: {
+            'Authorization': `Bearer ${access_token}`,
+          },
+        });
+
+        if (userResponse.status === 200) {
+          const user = userResponse.data;
+          setUserFullName(user.full_name);
+          setIsAuthenticated(true);
+          message.success('Успешный вход!');
+        } else {
+          setIsAuthenticated(false);
+          message.error('Не удалось получить информацию о пользователе');
+        }
       } else {
         setIsAuthenticated(false);
         message.error('Неверный логин или пароль');

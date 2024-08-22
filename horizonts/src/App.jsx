@@ -10,11 +10,48 @@ const { Content } = Layout;
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('isAuthenticated') === 'true';
+    return !!localStorage.getItem('access_token');
+  });
+
+  const [userFullName, setUserFullName] = useState(() => {
+    return localStorage.getItem('userFullName') || '';
   });
 
   useEffect(() => {
     localStorage.setItem('isAuthenticated', isAuthenticated);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch('http://localhost:8000/api/v1/auth/users/me', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            },
+          });
+          if (response.ok) {
+            const userData = await response.json();
+            setUserFullName(userData.full_name);
+            localStorage.setItem('userFullName', userData.full_name);
+          } else {
+            setIsAuthenticated(false);
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('userFullName');
+          }
+        } catch (error) {
+          console.error('Ошибка загрузки данных пользователя:', error);
+          setIsAuthenticated(false);
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('userFullName');
+        }
+      };
+
+      fetchUserData();
+    } else {
+      setUserFullName('');
+      localStorage.removeItem('userFullName');
+    }
   }, [isAuthenticated]);
 
   return (
@@ -27,7 +64,7 @@ const App = () => {
     >
       <Router>
         <Layout>
-          <Header setIsAuthenticated={setIsAuthenticated} />
+          <Header setIsAuthenticated={setIsAuthenticated} userFullName={userFullName} />
           <Content style={{ padding: "20px" }}>
             <Routes>
               {isAuthenticated ? (
@@ -39,7 +76,7 @@ const App = () => {
                 </>
               ) : (
                 <>
-                  <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+                  <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} setUserFullName={setUserFullName} />} />
                   <Route path="*" element={<Navigate to="/" />} />
                 </>
               )}
