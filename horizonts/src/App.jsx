@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, ConfigProvider } from "antd";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Header from "./components/Header"; // Импортируем наш Header
+import Header from "./components/Header";
 import Statistic from "./pages/Statistic";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
@@ -9,7 +9,13 @@ import Login from './pages/Login';
 const { Content } = Layout;
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('isAuthenticated', isAuthenticated);
+  }, [isAuthenticated]);
 
   return (
     <ConfigProvider

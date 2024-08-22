@@ -6,7 +6,9 @@ from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://user:userpassword@db:3306/horizons_stat")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", "mysql+pymysql://user:userpassword@db:3306/horizons_stat"
+)
 
 try:
     engine = create_engine(DATABASE_URL)

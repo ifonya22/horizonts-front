@@ -41,7 +41,9 @@ def get_factory_day_info(firm_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{firm_id}/critical")
 def get_factory_critical_day_info(firm_id: int, db: Session = Depends(get_db)):
-    data = get_firm_critical_events(db, firm_id, datetime.now().strftime("%Y-%m-%d"))
+    data = get_firm_critical_events(
+        db, firm_id, datetime.now().strftime("%Y-%m-%d")
+    )
     logger.warning(data)
     return data
 
@@ -83,7 +85,10 @@ example_data = {
                     "idleTime": "3 часа 15 минут",
                     "criticalEvents": 4,
                     "assignedTime": "2 часа",
-                    "data": [{"time": "2024-08-10 10:00", "value": 50}, {"time": "2024-08-10 11:00", "value": 55}]
+                    "data": [
+                        {"time": "2024-08-10 10:00", "value": 50},
+                        {"time": "2024-08-10 11:00", "value": 55},
+                    ],
                 },
                 {
                     "id": 2,
@@ -92,9 +97,12 @@ example_data = {
                     "idleTime": "2 часа",
                     "criticalEvents": 2,
                     "assignedTime": "1 час",
-                    "data": [{"time": "2024-08-10 10:00", "value": 60}, {"time": "2024-08-10 11:00", "value": 65}]
-                }
-            ]
+                    "data": [
+                        {"time": "2024-08-10 10:00", "value": 60},
+                        {"time": "2024-08-10 11:00", "value": 65},
+                    ],
+                },
+            ],
         },
         {
             "id": 2,
@@ -107,21 +115,28 @@ example_data = {
                     "idleTime": "1 час",
                     "criticalEvents": 3,
                     "assignedTime": "2 часа",
-                    "data": [{"time": "2024-08-10 10:00", "value": 70}, {"time": "2024-08-10 11:00", "value": 75}]
+                    "data": [
+                        {"time": "2024-08-10 10:00", "value": 70},
+                        {"time": "2024-08-10 11:00", "value": 75},
+                    ],
                 }
-            ]
-        }
+            ],
+        },
     ]
 }
 
+
 @router.get("/{firm_id}/{workshop_id}")
 async def get_shop_info(workshop_id: int):
-    shop = next((shop for shop in example_data["shops"] if shop["id"] == workshop_id), None)
+    shop = next(
+        (shop for shop in example_data["shops"] if shop["id"] == workshop_id),
+        None,
+    )
     if shop:
         return shop
     return {"message": "Цех не найден"}, 404
 
+
 @router.get("/{firm_id}/workshops/")
 async def get_all_shops():
     return example_data
-

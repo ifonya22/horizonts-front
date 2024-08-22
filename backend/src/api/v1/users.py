@@ -1,4 +1,3 @@
-
 from database.queries import get_db
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session

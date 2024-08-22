@@ -1,16 +1,47 @@
 import React, { useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Flex, message } from 'antd';
+import { Button, Checkbox, Form, Input, message } from 'antd';
+import axios from 'axios';
 
 const Login = ({ setIsAuthenticated }) => {
-  const onFinish = (values) => {
+  const [loading, setLoading] = useState(false);
+
+  const onFinish = async (values) => {
     const { username, password } = values;
 
-    if (username === 'admin' && password === 'admin') {
-      setIsAuthenticated(true); 
-      message.success('Успешный вход!');
-    } else {
-      message.error('Неверный логин или пароль');
+    setLoading(true);
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/auth/token', new URLSearchParams({
+        grant_type: 'password',
+        username: username,
+        password: password,
+        scope: '',              
+        client_id: '',           
+        client_secret: '',       
+      }), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      if (response.status === 200) {
+
+        setIsAuthenticated(true);
+        message.success('Успешный вход!');
+      } else {
+        setIsAuthenticated(false);
+        message.error('Неверный логин или пароль');
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+      if (error.response && error.response.status === 401) {
+        message.error('Неверный логин или пароль');
+      } else {
+        message.error('Ошибка сети или сервера');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,16 +79,16 @@ const Login = ({ setIsAuthenticated }) => {
         <Input prefix={<LockOutlined />} type="password" placeholder="Пароль" />
       </Form.Item>
       <Form.Item>
-        <Flex justify="space-between" align="center">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Form.Item name="remember" valuePropName="checked" noStyle>
             <Checkbox>Оставаться в аккаунте</Checkbox>
           </Form.Item>
           <a href="">Забыл пароль</a>
-        </Flex>
+        </div>
       </Form.Item>
 
       <Form.Item>
-        <Button block type="primary" htmlType="submit">
+        <Button block type="primary" htmlType="submit" loading={loading}>
           Войти
         </Button>
         или <a href="">Зарегистрироваться!</a>
