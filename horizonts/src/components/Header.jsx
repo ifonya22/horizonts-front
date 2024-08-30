@@ -8,7 +8,9 @@ const { Text } = Typography;
 const Header = ({ setIsAuthenticated, userFullName }) => {
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('access_token');
     setIsAuthenticated(false);
+    window.location.href = '/';
   };
 
   const menu = (

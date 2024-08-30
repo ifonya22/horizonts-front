@@ -54,6 +54,8 @@ class User(Base):
     full_name = Column(String(255), nullable=True)
     email = Column(String(255), unique=True, index=True, nullable=True)
     hashed_password = Column(String(255), nullable=False)
+    isadmin = Column(Integer, nullable=True, default=0)
+    position = Column(String(255), nullable=True)
 
 
 class Status(Base):

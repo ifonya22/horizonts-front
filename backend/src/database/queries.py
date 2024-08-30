@@ -122,17 +122,14 @@ def get_firm_critical_events(db, firm_id, date):
     for row in result.fetchall():
         for column, value in zip(column_names, row):
             if isinstance(value, datetime):
-
                 data_dict[column].append(value.strftime("%H:%M:%S"))
             elif isinstance(value, timedelta):
-
                 total_seconds = int(value.total_seconds())
                 hours, remainder = divmod(total_seconds, 3600)
                 minutes, seconds = divmod(remainder, 60)
                 formatted_duration = f"{hours:02}:{minutes:02}:{seconds:02}"
                 data_dict[column].append(formatted_duration)
             else:
-
                 data_dict[column].append(value)
 
     return data_dict
@@ -151,3 +148,37 @@ def get_all_firms_names(db):
             data_dict[column].append(value)
 
     return data_dict
+
+
+def get_users(db):
+    sql = """
+    SELECT * FROM `users` WHERE isadmin = 1
+    """
+    admins = db.execute(text(sql))
+    sql = """
+    SELECT * FROM `users` WHERE isadmin = 0
+    """
+    employees = db.execute(text(sql))
+
+    return {
+        "users": {
+            "admins": [
+                {
+                    "id": admin.id,
+                    "full_name": admin.full_name,
+                    "isadmin": admin.isadmin,
+                    "position": admin.position,
+                }
+                for admin in admins
+            ],
+            "employees": [
+                {
+                    "id": emlpoyee.id,
+                    "full_name": emlpoyee.full_name,
+                    "isadmin": emlpoyee.isadmin,
+                    "position": emlpoyee.position,
+                }
+                for emlpoyee in employees
+            ],
+        }
+    }
