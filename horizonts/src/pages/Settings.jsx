@@ -2,12 +2,22 @@ import React, { useState } from "react";
 import LeftMenu from "../components/LeftMenu";
 import { Card, Typography, Button, Flex } from "antd";
 import FirmsList from "../components/FirmsList";
-import UsersPage from "../components/UsersPage"; // Импортируйте компонент страницы пользователей
+import UsersPage from "../components/UsersPage";
+import SettingsAddFirmModal from "../components/SettingsAddFirmModal";
 
 const { Title } = Typography;
 
 const Settings = () => {
-  const [selectedTab, setSelectedTab] = useState("firms"); // Управляемое состояние для отслеживания выбранной вкладки
+  const [selectedTab, setSelectedTab] = useState("firms");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   return (
     <div className="flex">
@@ -50,12 +60,16 @@ const Settings = () => {
                     }}
                   >
                     <Title level={3}>Предприятия</Title>
-                    <Button>Добавить предприятие</Button>
+                    <Button onClick={showModal}>Добавить предприятие</Button> {/* Обновлено */}
                   </div>
                   <FirmsList />
+                  <SettingsAddFirmModal
+                    isVisible={isModalVisible}
+                    onClose={handleCancel}
+                  />
                 </div>
               ) : (
-                <UsersPage /> // Отображаем компонент UsersPage, если выбрана вкладка "Пользователи"
+                <UsersPage />
               )}
             </Card>
           </div>

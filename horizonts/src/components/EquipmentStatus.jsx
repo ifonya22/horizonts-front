@@ -6,7 +6,7 @@ import EquipmentModal from './EquipmentModal';
 
 const { Panel } = Collapse;
 
-const EquipmentStatus = () => {
+const EquipmentStatus = ({factoryId}) => {
   const [selectedShop, setSelectedShop] = useState('Все');
   const [shopsData, setShopsData] = useState([]);
   const [equipmentData, setEquipmentData] = useState([]);
@@ -15,22 +15,23 @@ const EquipmentStatus = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios.get('http://localhost:8000/api/v1/firm/1/workshops/');
+      if (factoryId) {
+      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/workshops/`);
       setShopsData(result.data.shops);
-      setEquipmentData(result.data.shops);
+      setEquipmentData(result.data.shops);}
     };
     fetchData();
-  }, []);
+  }, [factoryId]);
 
   const handleShopChange = async (e) => {
     const shopId = e.target.value;
     setSelectedShop(shopId);
 
     if (shopId === 'Все') {
-      const result = await axios.get('http://localhost:8000/api/v1/firm/1/workshops/');
+      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/workshops/`);
       setEquipmentData(result.data.shops);
     } else {
-      const result = await axios.get(`http://localhost:8000/api/v1/firm/1/${shopId}`);
+      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/${shopId}`);
       setEquipmentData([result.data]);
     }
   };

@@ -55,7 +55,7 @@ const Statistic = () => {
         </div>
       </div>
       <div style={{ marginTop: "200px", marginLeft: "50px" }}>
-        <EquipmentStatus />
+        <EquipmentStatus factoryId={selectedFactoryId}/>
       </div>
     </div>
   );

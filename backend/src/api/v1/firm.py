@@ -100,6 +100,7 @@ example_data = {
                     "data": [
                         {"time": "2024-08-10 10:00", "value": 60},
                         {"time": "2024-08-10 11:00", "value": 65},
+                        {"time": "2024-08-10 12:00", "value": 63},
                     ],
                 },
             ],
@@ -127,7 +128,7 @@ example_data = {
 
 
 @router.get("/{firm_id}/{workshop_id}")
-async def get_shop_info(workshop_id: int):
+async def get_shop_info(firm_id: int, workshop_id: int):
     shop = next(
         (shop for shop in example_data["shops"] if shop["id"] == workshop_id),
         None,
@@ -138,5 +139,5 @@ async def get_shop_info(workshop_id: int):
 
 
 @router.get("/{firm_id}/workshops/")
-async def get_all_shops():
+async def get_all_shops(firm_id: int):
     return example_data

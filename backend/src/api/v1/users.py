@@ -8,6 +8,6 @@ router = APIRouter(prefix="/api/v1/users")
 
 
 @router.get("/")
-def update_firm(db: Session = Depends(get_db)):
+def get_all_users(db: Session = Depends(get_db)):
     result = get_users(db)
     return result
