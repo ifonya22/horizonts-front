@@ -26,3 +26,9 @@ class StatisticRequest:
 @dataclass
 class StandstillRequest:
     factory_id: int
+
+
+@dataclass
+class AddFirm:
+    firmName: str
+    workshops: list

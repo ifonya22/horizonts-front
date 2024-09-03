@@ -182,3 +182,46 @@ def get_users(db):
             ],
         }
     }
+
+
+def add_new_firm(db, firm_name):
+    sql = """
+    INSERT INTO `firm` (`id_f`, `short_f`, `long_f`) VALUES (NULL, :firm_short_name, :firm_long_name);
+    """
+    result = db.execute(
+        text(sql), {"firm_short_name": firm_name, "firm_long_name": firm_name}
+    )
+
+    return result
+
+
+def add_new_workshop(db, workshop_num, workshop_name, firm_id):
+    sql = """
+    INSERT INTO `workshops` (`id`, `num`, `name`, `firm_id`) VALUES (NULL, :workshop_num, :workshop_name, :firm_id);
+    """
+    result = db.execute(
+        text(sql),
+        {
+            "workshop_num": workshop_num,
+            "workshop_name": workshop_name,
+            "firm_id": firm_id,
+        },
+    )
+
+    return result
+
+
+def add_new_equipment(db, max_obj, percent_obj, workshop_id):
+    sql = """
+    INSERT INTO `objects` (`id_obj`, `max_obj`, `percent_obj`, `workshop_id`) VALUES (NULL, :max_obj, :percent_obj, :workshop_id);
+    """
+    result = db.execute(
+        text(sql),
+        {
+            "max_obj": max_obj,
+            "percent_obj": percent_obj,
+            "workshop_id": workshop_id,
+        },
+    )
+
+    return result
