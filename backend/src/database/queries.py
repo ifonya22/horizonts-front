@@ -191,24 +191,28 @@ def add_new_firm(db, firm_name):
     result = db.execute(
         text(sql), {"firm_short_name": firm_name, "firm_long_name": firm_name}
     )
+    db.commit()
 
-    return result
+    firm_id = result.lastrowid
+    return firm_id
 
 
-def add_new_workshop(db, workshop_num, workshop_name, firm_id):
+def add_new_workshop(db, workshop_num, workshop_name, workshop_id):
     sql = """
     INSERT INTO `workshops` (`id`, `num`, `name`, `firm_id`) VALUES (NULL, :workshop_num, :workshop_name, :firm_id);
     """
     result = db.execute(
         text(sql),
         {
-            "workshop_num": workshop_num,
+            "workshop_num": int(workshop_num),
             "workshop_name": workshop_name,
-            "firm_id": firm_id,
+            "firm_id": workshop_id,
         },
     )
+    db.commit()
 
-    return result
+    workshop_id = result.lastrowid
+    return workshop_id
 
 
 def add_new_equipment(db, max_obj, percent_obj, workshop_id):
@@ -223,5 +227,7 @@ def add_new_equipment(db, max_obj, percent_obj, workshop_id):
             "workshop_id": workshop_id,
         },
     )
+    db.commit()
 
-    return result
+    equipment_id = result.lastrowid
+    return equipment_id

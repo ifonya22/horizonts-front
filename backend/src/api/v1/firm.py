@@ -60,16 +60,16 @@ def get_all_factories(db: Session = Depends(get_db)):
 
 @router.post("/add")
 def add_firm(data: AddFirm, db: Session = Depends(get_db)):
+    # TODO: добавить правильные поля
     firm_name = data.firmName
     workshops = data.workshops
     firm_id = add_new_firm(db, firm_name)
-    # TODO: не работает запись в бд
     for workshop in workshops:
         workshop_id = add_new_workshop(
             db, workshop.name, workshop.name, firm_id
         )
         for equip in workshop.equipment:
-            res = add_new_equipment(db, 1, 0.3, workshop_id)  # equip.name ...
+            res = add_new_equipment(db, 1, 0.3, workshop_id)
 
     return {"status": "ok"}
 

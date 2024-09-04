@@ -98,11 +98,11 @@ const SettingsAddFirmModal = ({ isVisible, onClose }) => {
           {workshops.map(workshop => (
             <TabPane tab={`Цех ${workshop.key}`} key={workshop.key} closable={false}>
               <Form.Item
-                label={`Название цеха ${workshop.key}`}
-                rules={[{ required: true, message: 'Введите название цеха' }]}
+                label={`Номер цеха ${workshop.key}`}
+                rules={[{ required: true, message: 'Введите Номер цеха' }]}
               >
                 <Input 
-                  placeholder="Название цеха" 
+                  placeholder="Номер цеха" 
                   value={workshop.name}
                   onChange={(e) => updateWorkshopName(workshop.key, e.target.value)}
                 />
