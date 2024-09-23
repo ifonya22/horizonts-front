@@ -24,7 +24,7 @@ services:
     ports:
       - "8888:3306"
     volumes:
-      - db_data_new:/var/lib/mysql
+      - db_data_new_:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -53,7 +53,13 @@ services:
       - TZ=Europe/Moscow
     command: ["sh", "-c", "sleep 15 && poetry run python main.py"]
 
-    
+  nginx:
+    build: ./nginx
+    container_name: horizons_web_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
 
 volumes:
-  db_data_new:
+  db_data_new_:
