@@ -31,16 +31,18 @@ class StandstillRequest:
 from pydantic import BaseModel
 from typing import List
 
+
 class Equipment(BaseModel):
     name: str
     description: str
+
 
 class Workshop(BaseModel):
     key: str
     name: str
     equipment: List[Equipment]
 
+
 class AddFirm(BaseModel):
     firmName: str
     workshops: List[Workshop]
-

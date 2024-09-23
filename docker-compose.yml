@@ -53,13 +53,13 @@ services:
       - TZ=Europe/Moscow
     command: ["sh", "-c", "sleep 15 && poetry run python main.py"]
 
-  nginx:
-    build: ./nginx
-    container_name: horizons_web_nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - frontend
+  # nginx:
+  #   build: ./nginx
+  #   container_name: horizons_web_nginx
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - frontend
 
 volumes:
   db_data_new_:
