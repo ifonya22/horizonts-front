@@ -16,7 +16,7 @@ def get_db():
         db.close()
 
 
-def get_statistics_results(db, request):
+def get_statistics_results(db, request, id_role):
     # sql = f"""
     # SELECT DATE_FORMAT(time_stc, '%H:%i') AS minute, SUM(power_stc) AS total_capacity
     # FROM statistics
@@ -24,24 +24,50 @@ def get_statistics_results(db, request):
     # AND time_stc BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}'), '02:00:00') AND CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}')
     # GROUP BY minute ORDER BY minute;
     # """
-    sql = """
-    SELECT DATE_FORMAT(time_stc, '%H:%i') AS minute, SUM(power_stc) AS total_capacity
-    FROM statistics
-    JOIN objects ON objects.id_obj = statistics.id_obj_stc
-    JOIN workshops ON workshops.id = objects.workshop_id
-    WHERE date_stc = :date AND workshops.firm_id = :firm_id
-    AND time_stc BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', 'Europe/Moscow'), '02:00:00') AND CONVERT_TZ(NOW(), 'UTC', 'Europe/Moscow')
-    GROUP BY minute ORDER BY minute;
-    """
-    print(sql)
-    result = db.execute(
-        text(sql), {"firm_id": request.factory_id, "date": request.start_date}
-    )
+    sql = None
 
-    return result
+    if id_role == 1:
+        sql = """
+        SELECT DATE_FORMAT(time_stc, '%H:%i') AS minute, SUM(power_stc) AS total_capacity
+        FROM statistics
+        JOIN objects ON objects.id_obj = statistics.id_obj_stc
+        JOIN workshops ON workshops.id = objects.workshop_id
+        WHERE date_stc = :date AND workshops.firm_id = :firm_id
+        AND time_stc BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', 'Europe/Moscow'), '02:00:00') AND CONVERT_TZ(NOW(), 'UTC', 'Europe/Moscow')
+        GROUP BY minute ORDER BY minute;
+        """
+    elif id_role == 2:
+        sql = """
+        SELECT DATE_FORMAT(time_stc, '%H:%i') AS minute, SUM(power_stc) AS total_capacity
+        FROM statistics
+        JOIN objects ON objects.id_obj = statistics.id_obj_stc
+        JOIN workshops ON workshops.id = objects.workshop_id
+        WHERE date_stc = :date AND workshops.firm_id = :firm_id
+        AND time_stc BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', 'Europe/Moscow'), '02:00:00') AND CONVERT_TZ(NOW(), 'UTC', 'Europe/Moscow')
+        GROUP BY minute ORDER BY minute;
+        """
+    elif id_role == 3:
+        sql = """
+        SELECT DATE_FORMAT(time_stc, '%H:%i') AS minute, SUM(power_stc) AS total_capacity
+        FROM statistics
+        JOIN objects ON objects.id_obj = statistics.id_obj_stc
+        WHERE date_stc = :date AND objects.workshop_id = :firm_id
+        AND time_stc BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', 'Europe/Moscow'), '02:00:00') AND CONVERT_TZ(NOW(), 'UTC', 'Europe/Moscow')
+        GROUP BY minute ORDER BY minute;
+        """
+
+    if sql:
+        result = db.execute(
+            text(sql),
+            {"firm_id": request.factory_id, "date": request.start_date},
+        )
+
+        return result
+
+    return None
 
 
-def get_statistics_prediction(db, request):
+def get_statistics_prediction(db, request, id_role):
     # sql = f"""
     # SELECT DATE_FORMAT(time_pr, '%H:%i') AS minute, SUM(power_pr) AS total_capacity
     # FROM predictor
@@ -49,20 +75,34 @@ def get_statistics_prediction(db, request):
     # AND time_pr BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}'), '02:00:00') AND CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}')
     # GROUP BY minute ORDER BY minute;
     # """
-    sql = f"""
-    SELECT DATE_FORMAT(time_pr, '%H:%i') AS minute, SUM(power_pr) AS total_capacity
-    FROM predictor
-    JOIN objects ON objects.id_obj = predictor.id_obj_pr
-    JOIN workshops ON workshops.id = objects.workshop_id
-    WHERE predictor.date_pr = :date AND workshops.firm_id = :firm_id
-    AND predictor.time_pr BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}'), '02:00:00') AND CONVERT_TZ(NOW() + INTERVAL 10 MINUTE, 'UTC', '{TIMEZONE}')
-    GROUP BY minute ORDER BY minute;
-    """
+    sql = None
 
-    print(sql)
-    result = db.execute(
-        text(sql), {"firm_id": request.factory_id, "date": request.start_date}
-    )
+    if id_role in [1, 2]:
+        sql = f"""
+        SELECT DATE_FORMAT(time_pr, '%H:%i') AS minute, SUM(power_pr) AS total_capacity
+        FROM predictor
+        JOIN objects ON objects.id_obj = predictor.id_obj_pr
+        JOIN workshops ON workshops.id = objects.workshop_id
+        WHERE predictor.date_pr = :date AND workshops.firm_id = :firm_id
+        AND predictor.time_pr BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}'), '02:00:00') AND CONVERT_TZ(NOW() + INTERVAL 10 MINUTE, 'UTC', '{TIMEZONE}')
+        GROUP BY minute ORDER BY minute;
+        """
+    elif id_role == 3:
+        sql = f"""
+        SELECT DATE_FORMAT(time_pr, '%H:%i') AS minute, SUM(power_pr) AS total_capacity
+        FROM predictor
+        JOIN objects ON objects.id_obj = predictor.id_obj_pr
+        WHERE predictor.date_pr = :date AND objects.workshop_id = :firm_id
+        AND predictor.time_pr BETWEEN SUBTIME(CONVERT_TZ(NOW(), 'UTC', '{TIMEZONE}'), '02:00:00') AND CONVERT_TZ(NOW() + INTERVAL 10 MINUTE, 'UTC', '{TIMEZONE}')
+        GROUP BY minute ORDER BY minute;
+        """
+
+    # print(sql)
+    if sql:
+        result = db.execute(
+            text(sql),
+            {"firm_id": request.factory_id, "date": request.start_date},
+        )
 
     return result
 
@@ -152,12 +192,26 @@ def get_firm_critical_events(db, firm_id, date):
     return data_dict
 
 
-def get_all_firms_names(db):
-    sql = """
-    SELECT *
-    FROM firm;
-    """
-    result = db.execute(text(sql))
+def get_all_firms_names(db, username, id_role):
+    if id_role in [2, 3]:
+        sql = """
+        SELECT firm.id_f, firm.short_f, firm.long_f
+        FROM firm
+        JOIN workshops ON workshops.firm_id = firm.id_f
+        JOIN users ON users.id_workshop = workshops.id
+        WHERE users.username = :username
+
+        """
+        result = db.execute(text(sql), {
+            "username": username
+        })
+    elif id_role == 1:
+        sql = """
+            SELECT *
+            FROM firm
+        """
+        result = db.execute(text(sql))
+
     column_names = [column[0] for column in result.cursor.description]
     data_dict = {column: [] for column in column_names}
     for row in result.fetchall():
@@ -185,7 +239,7 @@ def get_users(db):
                     "full_name": admin.full_name,
                     "id_role": admin.id_role,
                     # "position": admin.position,
-                    "id_workshop": admin.id_workshop
+                    "id_workshop": admin.id_workshop,
                 }
                 for admin in admins
             ],
@@ -195,7 +249,7 @@ def get_users(db):
                     "full_name": emlpoyee.full_name,
                     "id_role": emlpoyee.id_role,
                     # "position": emlpoyee.position,
-                    "id_workshop": emlpoyee.id_workshop
+                    "id_workshop": emlpoyee.id_workshop,
                 }
                 for emlpoyee in employees
             ],
@@ -260,6 +314,17 @@ def get_workshops_list(db, firm_id: int):
     return workshops
 
 
+def get_workshop_by_workshop_id(db, workshop_id: int):
+    sql = """
+    SELECT objects.id_obj, workshops.name
+    FROM `objects` 
+    JOIN workshops ON workshops.id = objects.workshop_id
+    WHERE workshop_id = :workshop_id
+    """
+    workshops = db.execute(text(sql), {"workshop_id": workshop_id}).fetchall()
+    return workshops
+
+
 def get_equipments_list(db, workshop_id: int):
     sql = """
     SELECT id_obj FROM `objects` WHERE workshop_id = :workshop_id
@@ -279,6 +344,7 @@ def get_equipments_list(db, workshop_id: int):
     ]
     return equipment
 
+
 def get_equipment_data_for_graphic(db, equipment_id: int, date_stc):
     sql = """
     SELECT DATE_FORMAT(time_stc, '%H:%i') AS minute, SUM(power_stc) AS total_capacity
@@ -294,3 +360,19 @@ def get_equipment_data_for_graphic(db, equipment_id: int, date_stc):
 
     data = [{"time": equip[0], "value": equip[1]} for equip in data.fetchall()]
     return data
+
+
+from fastapi.logger import logger
+
+
+def get_user_id_role(db, username: str):
+    sql = """
+    SELECT username, id_role, id_workshop FROM `users` WHERE username = :username
+    """
+    data = db.execute(text(sql), {"username": username}).fetchall()
+
+    logger.warning(f"aaaaaaaaaaaaaaaaaaaaaaaaaaaac {username, data}")
+    # if not data:
+    #     raise HTTPException(status_code=404, detail="User not found")
+
+    return data[0][0], int(data[0][1]), int(data[0][2])

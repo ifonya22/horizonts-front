@@ -16,7 +16,9 @@ const EquipmentStatus = ({factoryId}) => {
   useEffect(() => {
     const fetchData = async () => {
       if (factoryId) {
-      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/workshops/`);
+      const username = localStorage.getItem('username');
+      console.log("ale:", username)
+      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/workshops/`, {headers: {'Username': username}});
       setShopsData(result.data.shops);
       setEquipmentData(result.data.shops);}
     };
@@ -28,7 +30,10 @@ const EquipmentStatus = ({factoryId}) => {
     setSelectedShop(shopId);
 
     if (shopId === 'Все') {
-      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/workshops/`);
+      const username = localStorage.getItem('username');
+      console.log("ale:", username)
+      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/workshops/`, {headers: {'Username': username}});
+
       setEquipmentData(result.data.shops);
     } else {
       const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/${shopId}`);

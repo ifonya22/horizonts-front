@@ -58,7 +58,6 @@ class User(Base):
     id_workshop = Column(Integer, nullable=True)
 
 
-
 class Status(Base):
     __tablename__ = "statuses"
 

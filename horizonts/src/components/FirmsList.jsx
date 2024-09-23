@@ -12,7 +12,8 @@ const FirmsList = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('http://localhost:8000/api/v1/firm/get_all_factories/');
+      const username = localStorage.getItem('username');
+      const response = await fetch('http://localhost:8000/api/v1/firm/get_all_factories/', {headers: {'Username': username}});
       const data = await response.json();
       const combinedButtons = data.short_f.map((short, index) => ({
         short,

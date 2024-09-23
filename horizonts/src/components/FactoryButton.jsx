@@ -15,7 +15,8 @@ const handleMenuClick = (key, label, setSelectedFactory, onSelect) => {
     useEffect(() => {
       const fetchFactories = async () => {
         try {
-          const response = await fetch('http://localhost:8000/api/v1/firm/get_all_factories/');
+          const username = localStorage.getItem('username');
+          const response = await fetch('http://localhost:8000/api/v1/firm/get_all_factories/', {headers: {'Username': username}});
           const data = await response.json();
   
           if (data.id_f.length > 0) {

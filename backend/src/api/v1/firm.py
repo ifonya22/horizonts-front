@@ -14,8 +14,9 @@ from database.queries import (
     get_firm_max_critical_power,
     get_firm_power_consumption,
     get_firm_working_time,
+    get_user_id_role,
 )
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from sqlalchemy.orm import Session
 from fastapi.logger import logger
 
@@ -54,8 +55,9 @@ def get_factory_critical_day_info(firm_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/get_all_factories/")
-def get_all_factories(db: Session = Depends(get_db)):
-    result = get_all_firms_names(db)
+def get_all_factories(db: Session = Depends(get_db), username: str = Header(None)):
+    _, id_role, id_workshop = get_user_id_role(db, username)
+    result = get_all_firms_names(db, username, id_role)
     return result
 
 
@@ -108,6 +110,9 @@ async def get_shop_info(
 
 
 @router.get("/{firm_id}/workshops/")
-async def get_all_shops(firm_id: int, db: Session = Depends(get_db)):
-    result = get_workshops_data(firm_id, db)
+async def get_all_shops(
+    firm_id: int, db: Session = Depends(get_db), username: str = Header(None)
+):
+    _, id_role, id_workshop = get_user_id_role(db, username)
+    result = get_workshops_data(firm_id, db, id_role, id_workshop)
     return result
