@@ -37,6 +37,7 @@ const fetchData = async (factoryId) => {
   try {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0];
+    const username = localStorage.getItem('username');
     console.log(formattedDate);
 
     const response = await fetch(
@@ -46,6 +47,7 @@ const fetchData = async (factoryId) => {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
+          'Username': username,
         },
         body: JSON.stringify({
           factory_id: factoryId,

@@ -3,7 +3,7 @@ from database.queries import (
     get_statistics_results,
     get_statistics_prediction,
 )
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from models.requests import StatisticRequest
 from models.responses import StatisticResponse
 from sqlalchemy.orm import Session
@@ -13,7 +13,8 @@ router = APIRouter(prefix="/api/v1/statistic")
 
 @router.post("/last_hour", response_model=StatisticResponse)
 def get_statistics_orm(
-    request: StatisticRequest, db: Session = Depends(get_db)
+    request: StatisticRequest, db: Session = Depends(get_db),
+    username: str = Header(None)
 ):
     results = get_statistics_results(db, request)
     predictions = get_statistics_prediction(db, request)

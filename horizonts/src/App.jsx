@@ -17,6 +17,10 @@ const App = () => {
     return localStorage.getItem('userFullName') || '';
   });
 
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem('username') || '';
+  });
+
   useEffect(() => {
     localStorage.setItem('isAuthenticated', isAuthenticated);
   }, [isAuthenticated]);
@@ -34,23 +38,29 @@ const App = () => {
             const userData = await response.json();
             setUserFullName(userData.full_name);
             localStorage.setItem('userFullName', userData.full_name);
+            setUsername(userData.username); // сохраняем username
+            localStorage.setItem('username', userData.username); // сохраняем в localStorage
           } else {
             setIsAuthenticated(false);
             localStorage.removeItem('access_token');
             localStorage.removeItem('userFullName');
+            localStorage.removeItem('username'); // удаляем username
           }
         } catch (error) {
           console.error('Ошибка загрузки данных пользователя:', error);
           setIsAuthenticated(false);
           localStorage.removeItem('access_token');
           localStorage.removeItem('userFullName');
+          localStorage.removeItem('username'); // удаляем username
         }
       };
 
       fetchUserData();
     } else {
       setUserFullName('');
+      setUsername(''); // сбрасываем username
       localStorage.removeItem('userFullName');
+      localStorage.removeItem('username'); // удаляем username
     }
   }, [isAuthenticated]);
 
@@ -64,7 +74,7 @@ const App = () => {
     >
       <Router>
         <Layout>
-          <Header setIsAuthenticated={setIsAuthenticated} userFullName={userFullName} />
+          <Header setIsAuthenticated={setIsAuthenticated} userFullName={userFullName} username={username} />
           <Content style={{ padding: "20px" }}>
             <Routes>
               {isAuthenticated ? (
@@ -76,7 +86,7 @@ const App = () => {
                 </>
               ) : (
                 <>
-                  <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} setUserFullName={setUserFullName} />} />
+                  <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} setUserFullName={setUserFullName} setUsername={setUsername} />} />
                   <Route path="*" element={<Navigate to="/" />} />
                 </>
               )}
