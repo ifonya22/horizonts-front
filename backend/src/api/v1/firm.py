@@ -55,7 +55,9 @@ def get_factory_critical_day_info(firm_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/get_all_factories/")
-def get_all_factories(db: Session = Depends(get_db), username: str = Header(None)):
+def get_all_factories(
+    db: Session = Depends(get_db), username: str = Header(None)
+):
     _, id_role, id_workshop = get_user_id_role(db, username)
     result = get_all_firms_names(db, username, id_role)
     return result
@@ -68,9 +70,7 @@ def add_firm(data: AddFirm, db: Session = Depends(get_db)):
     workshops = data.workshops
     firm_id = add_new_firm(db, firm_name)
     for workshop in workshops:
-        workshop_id = add_new_workshop(
-            db, workshop.name, firm_id
-        )
+        workshop_id = add_new_workshop(db, workshop.name, firm_id)
         for equip in workshop.equipment:
             res = add_new_equipment(db, 1, 0.3, workshop_id)
 

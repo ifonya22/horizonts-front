@@ -257,9 +257,7 @@ def get_all_firms_names(db, username, id_role):
         WHERE users.username = :username
 
         """
-        result = db.execute(text(sql), {
-            "username": username
-        })
+        result = db.execute(text(sql), {"username": username})
     elif id_role == 1:
         sql = """
             SELECT *
@@ -391,11 +389,13 @@ def get_equipments_list(db, workshop_id: int):
             "workTime": get_work_time_by_obj_id(db, equip[0], "Norm"),
             "idleTime": get_work_time_by_obj_id(db, equip[0], "Prost"),
             "criticalEvents": get_ctitical_count_events(db, equip[0]),
-            "data": get_equipment_data_for_graphic(db, equip[0], datetime.today().strftime('%Y-%m-%d')),
+            "data": get_equipment_data_for_graphic(
+                db, equip[0], datetime.today().strftime("%Y-%m-%d")
+            ),
         }
         for idx, equip in enumerate(equipments)
     ]
-    return equipment    
+    return equipment
 
 
 def get_equipment_data_for_graphic(db, equipment_id: int, date_stc):
@@ -448,7 +448,10 @@ def get_work_time_by_obj_id(db, obj_id, type_stu):
     FROM status
     WHERE type_stu = '{type_stu}' AND id_obj_stu = :obj_id AND date_stu = :date;
     """
-    data = db.execute(text(sql), {"obj_id": obj_id, "date": datetime.today().strftime('%Y-%m-%d')}).fetchall()
+    data = db.execute(
+        text(sql),
+        {"obj_id": obj_id, "date": datetime.today().strftime("%Y-%m-%d")},
+    ).fetchall()
     hours, minutes = data[0]
 
     if hours:
@@ -457,7 +460,7 @@ def get_work_time_by_obj_id(db, obj_id, type_stu):
         return f"{minutes} мин."
     else:
         return "0 мин."
-    
+
 
 def get_critical_events_list(db, obj_id):
     sql = """
@@ -467,10 +470,14 @@ def get_critical_events_list(db, obj_id):
     AND date_stu = :date 
         AND (type_stu = "Krit" OR type_stu = "Prost");
     """
-    data = db.execute(text(sql), {"obj_id": obj_id, "date": datetime.today().strftime('%Y-%m-%d')}).fetchall()
+    data = db.execute(
+        text(sql),
+        {"obj_id": obj_id, "date": datetime.today().strftime("%Y-%m-%d")},
+    ).fetchall()
     # logger.warning(data)
 
     return [data]
+
 
 def get_ctitical_count_events(db, obj_id):
     sql = """
@@ -481,6 +488,9 @@ def get_ctitical_count_events(db, obj_id):
         AND id_obj_stu = :obj_id
         AND date_stu = :date;
     """
-    data = db.execute(text(sql), {"obj_id": obj_id, "date": datetime.today().strftime('%Y-%m-%d')}).fetchall()
+    data = db.execute(
+        text(sql),
+        {"obj_id": obj_id, "date": datetime.today().strftime("%Y-%m-%d")},
+    ).fetchall()
 
     return int(data[0][0])

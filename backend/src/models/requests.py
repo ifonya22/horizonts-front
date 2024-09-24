@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import List
+
+from pydantic import BaseModel
 
 
 @dataclass
@@ -28,10 +31,6 @@ class StandstillRequest:
     factory_id: int
 
 
-from pydantic import BaseModel
-from typing import List
-
-
 class Equipment(BaseModel):
     name: str
     description: str
@@ -46,3 +45,11 @@ class Workshop(BaseModel):
 class AddFirm(BaseModel):
     firmName: str
     workshops: List[Workshop]
+
+
+class Report(BaseModel):
+    objects: list[int]
+    date_start: str
+    time_start: str
+    date_end: str
+    time_end: str
