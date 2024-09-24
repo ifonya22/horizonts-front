@@ -270,14 +270,13 @@ def add_new_firm(db, firm_name):
     return firm_id
 
 
-def add_new_workshop(db, workshop_num, workshop_name, workshop_id):
+def add_new_workshop(db, workshop_name, workshop_id):
     sql = """
-    INSERT INTO `workshops` (`id`, `num`, `name`, `firm_id`) VALUES (NULL, :workshop_num, :workshop_name, :firm_id);
+    INSERT INTO `workshops` (`id`, `name`, `firm_id`) VALUES (NULL, :workshop_name, :firm_id);
     """
     result = db.execute(
         text(sql),
         {
-            "workshop_num": int(workshop_num),
             "workshop_name": workshop_name,
             "firm_id": workshop_id,
         },
@@ -334,15 +333,15 @@ def get_equipments_list(db, workshop_id: int):
         {
             "id": equip[0],
             "name": f"Оборудование {idx + 1}",
-            "workTime": "6 часов",  # TODO: rand
-            "idleTime": "1 час",  # TODO: rand
+            "workTime": get_work_time_by_obj_id(db, equip[0], "Norm"),
+            "idleTime": get_work_time_by_obj_id(db, equip[0], "Prost"),
             "criticalEvents": 3,  # TODO: rand
-            "assignedTime": "2 часа",  # TODO: rand
             "data": get_equipment_data_for_graphic(db, equip[0], datetime.today().strftime('%Y-%m-%d')),
+            "criticalEventsList": get_critical_events_list(db, equip[0])
         }
         for idx, equip in enumerate(equipments)
     ]
-    return equipment
+    return equipment    
 
 
 def get_equipment_data_for_graphic(db, equipment_id: int, date_stc):
@@ -376,3 +375,44 @@ def get_user_id_role(db, username: str):
     #     raise HTTPException(status_code=404, detail="User not found")
 
     return data[0][0], int(data[0][1]), int(data[0][2])
+
+
+def get_work_time_by_obj_id(db, obj_id, type_stu):
+    sql = f"""
+    SELECT 
+        FLOOR(SUM(CASE 
+            WHEN TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) = 0 
+            THEN 60  -- добавляем 1 минуту (60 секунд), если разница 0
+            ELSE TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) 
+        END) / 3600) AS hours,
+        
+        FLOOR((SUM(CASE 
+            WHEN TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) = 0 
+            THEN 60  -- добавляем 1 минуту (60 секунд), если разница 0
+            ELSE TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) 
+        END) % 3600) / 60) AS minutes
+    FROM status
+    WHERE type_stu = '{type_stu}' AND id_obj_stu = :obj_id AND date_stu = :date;
+    """
+    data = db.execute(text(sql), {"obj_id": obj_id, "date": datetime.today().strftime('%Y-%m-%d')}).fetchall()
+    hours, minutes = data[0]
+
+    if hours:
+        return f"{hours} ч. {minutes} мин."
+    elif minutes:
+        return f"{minutes} мин."
+    else:
+        return "0 мин."
+    
+
+def get_critical_events_list(db, obj_id):
+    sql = """
+    SELECT start_stu, end_stu, type_stu
+    FROM `status` 
+    WHERE id_obj_stu = :obj_id
+    AND date_stu = :date 
+        AND (type_stu = "Krit" OR type_stu = "Prost");
+    """
+    data = db.execute(text(sql), {"obj_id": obj_id, "date": datetime.today().strftime('%Y-%m-%d')}).fetchall()
+    logger.warning(data)
+    return data

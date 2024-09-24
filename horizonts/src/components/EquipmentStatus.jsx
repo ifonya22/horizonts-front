@@ -75,7 +75,7 @@ const EquipmentStatus = ({factoryId}) => {
                   <p>Время работы: {equipment.workTime}</p>
                   <p>Время простоя: {equipment.idleTime}</p>
                   <p>Критических событий: {equipment.criticalEvents}</p>
-                  <p>Назначенное время: {equipment.assignedTime}</p>
+                  
                   <Line {...{
                     data: equipment.data,
                     height: 100,

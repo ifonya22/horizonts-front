@@ -78,7 +78,6 @@ def get_workshops_data(firm_id: int, db, id_role, workshop_id):
                         "workTime": equip["workTime"],
                         "idleTime": equip["idleTime"],
                         "criticalEvents": equip["criticalEvents"],
-                        "assignedTime": equip["assignedTime"],
                         "data": equip["data"],
                     }
                     for equip in get_equipments_list(
@@ -102,7 +101,6 @@ def get_workshops_data(firm_id: int, db, id_role, workshop_id):
                         "workTime": equip["workTime"],
                         "idleTime": equip["idleTime"],
                         "criticalEvents": equip["criticalEvents"],
-                        "assignedTime": equip["assignedTime"],
                         "data": equip["data"],
                     }
                     for equip in get_equipments_list(
