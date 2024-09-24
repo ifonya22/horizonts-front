@@ -45,7 +45,7 @@ const DataDayCard = ({ factoryId }) => {
 
         title={
           <div className='flex items-center gap-4'>
-            <img src='https://via.placeholder.com/25' alt='Логотип' />
+            <img src='./flowchart.png' alt='Логотип' className="w-10 h-10 mr-2"/>
             <span className='mx-auto'>Данные предприятия за сутки</span>
           </div>
         }

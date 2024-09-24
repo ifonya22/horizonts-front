@@ -338,7 +338,7 @@ def get_equipments_list(db, workshop_id: int):
             "idleTime": "1 час",  # TODO: rand
             "criticalEvents": 3,  # TODO: rand
             "assignedTime": "2 часа",  # TODO: rand
-            "data": get_equipment_data_for_graphic(db, equip[0], "2024-09-23"),
+            "data": get_equipment_data_for_graphic(db, equip[0], datetime.today().strftime('%Y-%m-%d')),
         }
         for idx, equip in enumerate(equipments)
     ]

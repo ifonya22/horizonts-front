@@ -5,7 +5,9 @@ import axios from 'axios';
 
 const Login = ({ setIsAuthenticated, setUserFullName }) => {
   const [loading, setLoading] = useState(false);
-
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem('username') || '';
+  });
   const onFinish = async (values) => {
     const { username, password } = values;
 
@@ -38,6 +40,10 @@ const Login = ({ setIsAuthenticated, setUserFullName }) => {
         if (userResponse.status === 200) {
           const user = userResponse.data;
           setUserFullName(user.full_name);
+          console.log("aboooooooooooooooooba: ", user.username)
+          const username = user.username
+          localStorage.setItem('username', username); 
+          console.log("aboooooooooooooooooba 2 : ", localStorage.getItem('username'))
           setIsAuthenticated(true);
           message.success('Успешный вход!');
         } else {
@@ -57,6 +63,8 @@ const Login = ({ setIsAuthenticated, setUserFullName }) => {
       }
     } finally {
       setLoading(false);
+      // window.location.replace('/statistic');
+      // window.location.reload();
     }
   };
 

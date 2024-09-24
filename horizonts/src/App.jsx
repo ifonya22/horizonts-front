@@ -86,7 +86,7 @@ const App = () => {
                 </>
               ) : (
                 <>
-                  <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} setUserFullName={setUserFullName} setUsername={setUsername} />} />
+                  <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} setUserFullName={setUserFullName} />} />
                   <Route path="*" element={<Navigate to="/" />} />
                 </>
               )}
