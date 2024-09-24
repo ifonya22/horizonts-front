@@ -108,15 +108,19 @@ def get_statistics_prediction(db, request, id_role):
 
 
 def get_firm_critical_count(db, firm_id, date):
-    sql = f"""
+    sql = """
     SELECT COUNT(*)
     FROM `status`
+    JOIN objects ON objects.id_obj = status.id_obj_stu
+    JOIN workshops ON workshops.id = objects.workshop_id
+    JOIN firm ON firm.id_f = workshops.firm_id
     WHERE
     type_stu = 'Krit'
-        AND id_obj_stu = {firm_id}
-        AND date_stu = '{date}';
+    AND firm.id_f = :firm_id
+        AND date_stu = :date;
+
     """
-    result = db.execute(text(sql)).scalar()
+    result = db.execute(text(sql), {"firm_id": firm_id, "date": date}).scalar()
 
     return result
 
@@ -148,26 +152,77 @@ def get_firm_power_consumption(db, firm_id, date):
 
 
 def get_firm_working_time(db, firm_id, date):
-    sql = """"""
-    # result = db.execute(text(sql)).scalar()
-    result = "in_progress"
-    return result
+    sql = """
+    SELECT 
+        FLOOR(SUM(CASE 
+            WHEN TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) = 0 
+            THEN 60  -- добавляем 1 минуту (60 секунд), если разница 0
+            ELSE TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) 
+        END) / 3600) AS hours,
+        
+        FLOOR((SUM(CASE 
+            WHEN TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) = 0 
+            THEN 60  -- добавляем 1 минуту (60 секунд), если разница 0
+            ELSE TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) 
+        END) % 3600) / 60) AS minutes
+    FROM status
+    JOIN objects ON objects.id_obj = status.id_obj_stu
+    JOIN workshops ON workshops.id = objects.workshop_id
+    JOIN firm ON firm.id_f = workshops.firm_id
+    WHERE type_stu = 'Norm' AND firm.id_f = :firm_id AND date_stu = :date;
+    """
+    data = db.execute(text(sql), {"firm_id": firm_id, "date": date}).fetchall()
+    hours, minutes = data[0]
+
+    if hours:
+        return f"{hours} ч. {minutes} мин."
+    elif minutes:
+        return f"{minutes} мин."
+    else:
+        return "0 мин."
 
 
 def get_firm_equipment_downtime(db, firm_id, date):
-    sql = """"""
-    # result = db.execute(text(sql)).scalar()
-    result = "in_progress"
-    return result
+    sql = """
+    SELECT 
+        FLOOR(SUM(CASE 
+            WHEN TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) = 0 
+            THEN 60  -- добавляем 1 минуту (60 секунд), если разница 0
+            ELSE TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) 
+        END) / 3600) AS hours,
+        
+        FLOOR((SUM(CASE 
+            WHEN TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) = 0 
+            THEN 60  -- добавляем 1 минуту (60 секунд), если разница 0
+            ELSE TIME_TO_SEC(TIMEDIFF(end_stu, start_stu)) 
+        END) % 3600) / 60) AS minutes
+    FROM status
+    JOIN objects ON objects.id_obj = status.id_obj_stu
+    JOIN workshops ON workshops.id = objects.workshop_id
+    JOIN firm ON firm.id_f = workshops.firm_id
+    WHERE type_stu = 'Prost' AND firm.id_f = :firm_id AND date_stu = :date;
+    """
+    data = db.execute(text(sql), {"firm_id": firm_id, "date": date}).fetchall()
+    hours, minutes = data[0]
+
+    if hours:
+        return f"{hours} ч. {minutes} мин."
+    elif minutes:
+        return f"{minutes} мин."
+    else:
+        return "0 мин."
 
 
 def get_firm_critical_events(db, firm_id, date):
     sql = """
     SELECT start_stu, end_stu, is_notified_stu
     FROM status
-    WHERE id_obj_stu = :firm_id
-      AND date_stu = :date
-      AND type_stu = 'Krit';
+    JOIN objects ON objects.id_obj = status.id_obj_stu
+    JOIN workshops ON workshops.id = objects.workshop_id
+    JOIN firm ON firm.id_f = workshops.firm_id
+    WHERE firm.id_f = :firm_id
+        AND date_stu = :date
+        AND type_stu = 'Krit';
     """
 
     result = db.execute(text(sql), {"firm_id": firm_id, "date": date})
@@ -335,9 +390,8 @@ def get_equipments_list(db, workshop_id: int):
             "name": f"Оборудование {idx + 1}",
             "workTime": get_work_time_by_obj_id(db, equip[0], "Norm"),
             "idleTime": get_work_time_by_obj_id(db, equip[0], "Prost"),
-            "criticalEvents": 3,  # TODO: rand
+            "criticalEvents": get_ctitical_count_events(db, equip[0]),
             "data": get_equipment_data_for_graphic(db, equip[0], datetime.today().strftime('%Y-%m-%d')),
-            "criticalEventsList": get_critical_events_list(db, equip[0])
         }
         for idx, equip in enumerate(equipments)
     ]
@@ -414,5 +468,19 @@ def get_critical_events_list(db, obj_id):
         AND (type_stu = "Krit" OR type_stu = "Prost");
     """
     data = db.execute(text(sql), {"obj_id": obj_id, "date": datetime.today().strftime('%Y-%m-%d')}).fetchall()
-    logger.warning(data)
-    return data
+    # logger.warning(data)
+
+    return [data]
+
+def get_ctitical_count_events(db, obj_id):
+    sql = """
+    SELECT COUNT(*)
+    FROM `status`
+    WHERE
+    type_stu = 'Krit'
+        AND id_obj_stu = :obj_id
+        AND date_stu = :date;
+    """
+    data = db.execute(text(sql), {"obj_id": obj_id, "date": datetime.today().strftime('%Y-%m-%d')}).fetchall()
+
+    return int(data[0][0])
