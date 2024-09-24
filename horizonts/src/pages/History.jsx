@@ -4,6 +4,11 @@ import LeftMenu from "../components/LeftMenu"; // Импортируем мен�
 import FactoryButton from "../components/FactoryButton";
 import HistoryTable from "../components/HistoryTable";
 const { Title } = Typography;
+import dayjs from 'dayjs';
+
+const dateFormat = "YYYY-MM-DD"
+const today = dayjs();
+const twoDaysAgo = today.subtract(2, 'day');
 
 const History = () => {
   return (
@@ -28,7 +33,7 @@ const History = () => {
                 <div>Дата</div>
                 <br />
                 <div>
-                  <RangePicker />
+                  <RangePicker defaultValue={[twoDaysAgo, today]}/>
                 </div>
               </td>
               <td>
