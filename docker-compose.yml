@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    image: horizonts-front-backend
     container_name: horizons_web_back
     ports:
       - "8000:8000"
     depends_on:
       - db
     environment:
-      DATABASE_URL: "mysql+pymysql://user:userpassword@db:3306/horizons_stat"
+      DATABASE_URL: "mysql+pymysql://user_vivobook:$XaKeR$iDi$gUlYay$1110@db:3306/horizons_stat"
       # TIMEZONE: "Asia/Yekaterinburg"
       TIMEZONE: "Europe/Moscow"
 
@@ -17,10 +17,10 @@ services:
     image: mysql:8.0
     # restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: YBHNnjksajanfuQa!
       MYSQL_DATABASE: horizons_stat
-      MYSQL_USER: user
-      MYSQL_PASSWORD: userpassword
+      MYSQL_USER: user_vivobook
+      MYSQL_PASSWORD: $XaKeR$iDi$gUlYay$1110
     ports:
       - "8888:3306"
     volumes:
@@ -33,11 +33,11 @@ services:
       - "8070:80"
     environment:
       PMA_HOST: db
-      PMA_USER: user
-      PMA_PASSWORD: userpassword
+      PMA_USER: user_vivobook
+      PMA_PASSWORD: $XaKeR$iDi$gUlYay$1110
 
   frontend:
-    build: ./horizonts
+    image: horizonts-front-frontend
     container_name: horizons_web_front
     ports:
       - "3000:5000"
@@ -45,7 +45,7 @@ services:
       - backend
 
   db_filler:
-    build: ./scripts
+    image: horizonts-front-db_filler
     container_name: horizons_db_filler
     depends_on:
       - db
