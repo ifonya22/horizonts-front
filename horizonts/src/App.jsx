@@ -6,6 +6,7 @@ import Statistic from "./pages/Statistic";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
 import Login from './pages/Login';
+
 const { Content } = Layout;
 
 const App = () => {
@@ -19,6 +20,10 @@ const App = () => {
 
   const [username, setUsername] = useState(() => {
     return localStorage.getItem('username') || '';
+  });
+
+  const [userRole, setUserRole] = useState(() => {
+    return Number(localStorage.getItem('userRole')) || null; // Преобразуем в число
   });
 
   useEffect(() => {
@@ -38,29 +43,35 @@ const App = () => {
             const userData = await response.json();
             setUserFullName(userData.full_name);
             localStorage.setItem('userFullName', userData.full_name);
-            setUsername(userData.username); // сохраняем username
-            localStorage.setItem('username', userData.username); // сохраняем в localStorage
+            setUsername(userData.username);
+            localStorage.setItem('username', userData.username);
+            setUserRole(Number(userData.id_role)); // Преобразуем в число
+            localStorage.setItem('userRole', Number(userData.id_role)); // Сохраняем как число
           } else {
             setIsAuthenticated(false);
             localStorage.removeItem('access_token');
             localStorage.removeItem('userFullName');
-            localStorage.removeItem('username'); // удаляем username
+            localStorage.removeItem('username');
+            localStorage.removeItem('userRole'); // Удаляем роль
           }
         } catch (error) {
           console.error('Ошибка загрузки данных пользователя:', error);
           setIsAuthenticated(false);
           localStorage.removeItem('access_token');
           localStorage.removeItem('userFullName');
-          localStorage.removeItem('username'); // удаляем username
+          localStorage.removeItem('username');
+          localStorage.removeItem('userRole'); // Удаляем роль
         }
       };
 
       fetchUserData();
     } else {
       setUserFullName('');
-      setUsername(''); // сбрасываем username
+      setUsername('');
+      setUserRole(null); // Сбрасываем роль
       localStorage.removeItem('userFullName');
-      localStorage.removeItem('username'); // удаляем username
+      localStorage.removeItem('username');
+      localStorage.removeItem('userRole'); // Удаляем роль
     }
   }, [isAuthenticated]);
 
@@ -81,7 +92,11 @@ const App = () => {
                 <>
                   <Route path="/statistic" element={<Statistic />} />
                   <Route path="/history" element={<History />} />
-                  <Route path="/settings" element={<Settings />} />
+                  {userRole === 1 ? ( // Сравниваем с числом
+                    <Route path="/settings" element={<Settings />} />
+                  ) : (
+                    <Route path="/settings" element={<Navigate to="/statistic" />} />
+                  )}
                   <Route path="*" element={<Navigate to="/statistic" />} />
                 </>
               ) : (

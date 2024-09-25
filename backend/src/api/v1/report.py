@@ -1,3 +1,4 @@
+from database.queries import get_history_sql
 from core.report import generate_excel_report
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
@@ -24,3 +25,10 @@ async def read_items(request: Report):
             media_type="multipart/form-data",
         )
     return "NO DATA"
+
+
+@router.post("/history")
+async def get_history(request: Report):
+    result = get_history_sql(request)
+
+    return result

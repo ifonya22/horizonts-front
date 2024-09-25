@@ -32,3 +32,4 @@ class UserSchema(BaseModel):
     username: str
     full_name: str | None = None
     email: str | None = None
+    id_role: int

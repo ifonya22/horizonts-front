@@ -8,6 +8,7 @@ from database.queries import (
     add_new_workshop,
     get_all_firms_names,
     get_db,
+    get_equipments_list_by_workshop_id,
     get_firm_critical_count,
     get_firm_critical_events,
     get_firm_equipment_downtime,
@@ -15,6 +16,7 @@ from database.queries import (
     get_firm_power_consumption,
     get_firm_working_time,
     get_user_id_role,
+    get_workshops_list,
 )
 from fastapi import APIRouter, Depends, Header
 from sqlalchemy.orm import Session
@@ -106,8 +108,6 @@ async def get_shop_info(
         ],
     }
 
-    return {"message": "Цех не найден"}, 404
-
 
 @router.get("/{firm_id}/workshops/")
 async def get_all_shops(
@@ -115,4 +115,28 @@ async def get_all_shops(
 ):
     _, id_role, id_workshop = get_user_id_role(db, username)
     result = get_workshops_data(firm_id, db, id_role, id_workshop)
+    return result
+
+
+@router.get("/{firm_id}/objects_list/")
+def get_workshops_objects_list(firm_id: int, db: Session = Depends(get_db)):
+    # logger.warning(f"ooooooooooooooooo{firm_id}")
+    workshops = get_workshops_list(db, firm_id)
+    result = []
+    for workshop in workshops:
+        equipments = get_equipments_list_by_workshop_id(db, workshop[0])
+        equips = []
+        idx = 1
+        for equip in equipments:
+            equips_dict = {"value": equip[0], "title": f"Оборудование №{idx}"}
+            idx += 1
+            equips.append(equips_dict)
+
+        workshops_dict = {
+            "value": workshop[0],
+            "title": workshop[1],
+            "children": equips,
+        }
+        result.append(workshops_dict)
+
     return result

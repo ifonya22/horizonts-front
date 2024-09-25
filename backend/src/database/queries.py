@@ -366,6 +366,14 @@ def get_workshops_list(db, firm_id: int):
     return workshops
 
 
+def get_equipments_list_by_workshop_id(db, workshop_id: int):
+    sql = """
+    SELECT * FROM `objects` WHERE workshop_id = :workshop_id
+    """
+    equipments = db.execute(text(sql), {"workshop_id": workshop_id})
+    return equipments
+
+
 def get_workshop_by_workshop_id(db, workshop_id: int):
     sql = """
     SELECT objects.id_obj, workshops.name
@@ -494,3 +502,37 @@ def get_ctitical_count_events(db, obj_id):
     ).fetchall()
 
     return int(data[0][0])
+
+
+def get_history_sql(
+    db,
+    objects: list[int],
+    date_start: str,
+    time_start: str,
+    date_end: str,
+    time_end: str,
+):
+    sql = """
+    SELECT start_stu, date_stu, type_stu, firm.short_f, statistics.power_stc
+    FROM status 
+    JOIN objects ON objects.id_obj = status.id_obj_stu
+    JOIN workshops ON workshops.id = objects.workshop_id
+    JOIN firm ON firm.id_f = workshops.firm_id
+    JOIN statistics ON statistics.time_stc = status.start_stu
+    WHERE objects.id_obj IN (:objects)
+    AND date_stu BETWEEN CONCAT(:date_start, " ", :time_start) AND CONCAT(:date_end, " ", :time_end)
+    AND (type_stu = "Krit" OR type_stu = "Prost");
+    """
+
+    data = db.execute(
+        text(sql),
+        {
+            "objects": ", ".join([f"{obj}" for obj in objects]),
+            "date_start": date_start,
+            "time_start": time_start,
+            "date_end": date_end,
+            "time_end": time_end,
+        },
+    ).fetchall()
+
+    return data
