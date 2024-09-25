@@ -1,8 +1,8 @@
 import { DatePicker, TimePicker, Typography, Button } from "antd";
 import React, { useState } from 'react';
-import LeftMenu from "../components/LeftMenu"; // Импортируем меню из файла
-import HistoryTreeSelect from "../components/HistoryTreeSelect"; // Импортируем новый компонент
-import HistoryTable from "../components/HistoryTable";
+import LeftMenu from "../components/LeftMenu"; // Import the left menu component
+import HistoryTreeSelect from "../components/HistoryTreeSelect"; // Import the tree select component
+import HistoryTable from "../components/HistoryTable"; // Import the table component
 import dayjs from 'dayjs';
 import axios from 'axios';
 
@@ -13,37 +13,59 @@ const History = () => {
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [dateRange, setDateRange] = useState([dayjs().subtract(2, 'day'), dayjs()]);
   const [timeRange, setTimeRange] = useState([dayjs('00:00', 'HH:mm'), dayjs('21:00', 'HH:mm')]);
+  const [reportData, setReportData] = useState([]); // State to hold the report data
 
-  const handleGenerateReport = async () => {
+  const handleFilterApply = async () => {
     const [dateStart, dateEnd] = dateRange;
     const [timeStart, timeEnd] = timeRange;
-  
-    const reportData = {
+
+    const filterRequestData = {
       objects: selectedObjects,
       date_start: dateStart.format('YYYY-MM-DD'),
       time_start: timeStart.format('HH:mm'),
       date_end: dateEnd.format('YYYY-MM-DD'),
       time_end: timeEnd.format('HH:mm'),
     };
-  
+
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/report/', reportData, {
-        responseType: 'blob', // Устанавливаем тип ответа
+      const response = await axios.post('http://localhost:8000/api/v1/report/history', filterRequestData);
+      setReportData(response.data.data); // Update the report data with the response
+    } catch (error) {
+      console.error('Error applying filters:', error);
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    // Logic for generating report (e.g., downloading an Excel file)
+    const [dateStart, dateEnd] = dateRange;
+    const [timeStart, timeEnd] = timeRange;
+
+    const reportRequestData = {
+      objects: selectedObjects,
+      date_start: dateStart.format('YYYY-MM-DD'),
+      time_start: timeStart.format('HH:mm'),
+      date_end: dateEnd.format('YYYY-MM-DD'),
+      time_end: timeEnd.format('HH:mm'),
+    };
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/report/', reportRequestData, {
+        responseType: 'blob', // Set response type for downloading file
       });
-  
-      // Создаем URL для скачивания файла
+
+      // Create a URL for the downloaded file
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'Report.xlsx'); // Указываем имя файла
+      link.setAttribute('download', 'Report.xlsx'); // Specify the file name
       document.body.appendChild(link);
       link.click();
-      link.remove(); // Удаляем элемент после скачивания
+      link.remove(); // Remove the link after download
     } catch (error) {
       console.error('Error generating report:', error);
     }
   };
-  
+
   return (
     <div className="flex">
       <LeftMenu />
@@ -59,7 +81,7 @@ const History = () => {
                 <br />
                 <div>
                   <HistoryTreeSelect 
-                    onSelect={setSelectedObjects} // Обновляем состояние при выборе объектов
+                    onSelect={setSelectedObjects} // Update state when objects are selected
                   />
                 </div>
               </td>
@@ -87,12 +109,13 @@ const History = () => {
             </tr>
           </table>
           <div className="ml-4">
-            <Button onClick={handleGenerateReport}>Создать отчёт</Button>
+            <Button onClick={handleFilterApply}>Применить фильтр</Button>
+            <Button onClick={handleGenerateReport} className="ml-2">Создать отчёт</Button>
           </div>
         </div>
         <br />
         <div>
-          <HistoryTable />
+          <HistoryTable reportData={reportData} /> {/* Pass report data to HistoryTable */}
         </div>
       </div>
     </div>
@@ -100,4 +123,3 @@ const History = () => {
 };
 
 export default History;
-

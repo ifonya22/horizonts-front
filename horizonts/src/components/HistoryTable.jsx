@@ -1,110 +1,59 @@
 import React from "react";
 import { Card, Table, ConfigProvider } from "antd";
+
 const columns = [
   {
-    title: "Время",
-    dataIndex: "time",
-    key: "time",
-    render: (text) => <a>{text}</a>,
+    title: "Название цеха",
+    dataIndex: "workshop_name",
+    key: "workshop_name",
   },
   {
     title: "Дата",
-    dataIndex: "date",
-    key: "date",
+    dataIndex: "event_date",
+    key: "event_date",
   },
   {
-    title: "Предприятие",
-    dataIndex: "firm",
-    key: "firm",
+    title: "Время",
+    dataIndex: "event_time_start",
+    key: "event_time_start",
+    render: (text) => <span>{text}</span>,
   },
   {
-    title: "Описание",
-    key: "description",
-    dataIndex: "description",
-  },
-  {
-    title: "Тип",
-    key: "type",
-    dataIndex: "type",
+    title: "Статус",
+    dataIndex: "status",
+    key: "status",
   },
   {
     title: "Показатель",
-    key: "energy_consumption",
-    dataIndex: "energy_consumption",
-  },
-  {
-    title: "Причина",
-    key: "reason",
-    dataIndex: "reason",
-  },
-  {
-    title: "Уведомление",
-    key: "notification",
-    dataIndex: "notification",
+    dataIndex: "value",
+    key: "value",
   },
 ];
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "4",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "5",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
-const HistoryTable = () => {
+
+const HistoryTable = ({ reportData }) => {
+  // Add a unique key to each item
+  const dataSource = reportData.map((item, index) => ({
+    key: index + 1, // Unique key for each item
+    ...item, // Spread the rest of the properties
+  }));
+
   return (
     <div>
-      <Card
-        style={{
-        //   width: 300,
-        }}
-      >
+      <Card>
         <ConfigProvider
-    theme={{
-      components: {
-        Table: {
-          // horizontalItemSelectedColor: '#f57838',
-          // horizontalItemHoverColor: '#fff',
-          rowSelectedHoverBg: '#fff',
-          // colorPrimaryBorder: '#fff',
-          // itemActiveBg: '#f57838',
-          
-        },
-      },
-    }}
-  ><Table columns={columns} dataSource={data} /></ConfigProvider>
-        
+          theme={{
+            components: {
+              Table: {
+                rowSelectedHoverBg: '#fff',
+              },
+            },
+          }}
+        >
+          <Table columns={columns} dataSource={dataSource} />
+        </ConfigProvider>
       </Card>
     </div>
   );
 };
+
 export default HistoryTable;

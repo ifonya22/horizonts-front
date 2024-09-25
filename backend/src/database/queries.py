@@ -512,27 +512,34 @@ def get_history_sql(
     date_end: str,
     time_end: str,
 ):
+    placeholders = ', '.join([f":obj_{i}" for i in range(len(objects))])
     sql = """
-    SELECT start_stu, date_stu, type_stu, firm.short_f, statistics.power_stc
-    FROM status 
-    JOIN objects ON objects.id_obj = status.id_obj_stu
+    SELECT workshops.name, date_stc, TIME_FORMAT(statistics.time_stc, '%H:%i:%s') AS time_stc, power_stc, id_obj_stc, type_stc
+    FROM statistics
+    JOIN objects ON objects.id_obj = statistics.id_obj_stc
     JOIN workshops ON workshops.id = objects.workshop_id
-    JOIN firm ON firm.id_f = workshops.firm_id
-    JOIN statistics ON statistics.time_stc = status.start_stu
-    WHERE objects.id_obj IN (:objects)
-    AND date_stu BETWEEN CONCAT(:date_start, " ", :time_start) AND CONCAT(:date_end, " ", :time_end)
-    AND (type_stu = "Krit" OR type_stu = "Prost");
+    WHERE id_obj_stc IN :objects
+    AND date_stc BETWEEN :date_start AND :date_end
+    AND time_stc BETWEEN "00:00:00" AND "23:59:59"
     """
+
+    
+
+    sql = sql.replace(':objects', f'({placeholders})')
+
+    params = {
+        "date_start": date_start,
+        "time_start": time_start,
+        "date_end": date_end,
+        "time_end": time_end,
+    }
+
+    for i, obj in enumerate(objects):
+        params[f'obj_{i}'] = obj
 
     data = db.execute(
         text(sql),
-        {
-            "objects": ", ".join([f"{obj}" for obj in objects]),
-            "date_start": date_start,
-            "time_start": time_start,
-            "date_end": date_end,
-            "time_end": time_end,
-        },
+        params,
     ).fetchall()
-
+    logger.warning(f"qaqedqwdqweqd {data}")
     return data
