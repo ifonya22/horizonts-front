@@ -10,7 +10,7 @@ app = FastAPI(
     title="Horizonts",
     description="Horizonts API",
     version="0.5.1",
-    servers=[{"url": f"http://173.17.12.123:{PORT}"}],
+    # servers=[{"url": f"http://173.17.12.123:{PORT}"}],
 )
 
 # ORIGINS = os.getenv("ORIGINS", "").split(",")

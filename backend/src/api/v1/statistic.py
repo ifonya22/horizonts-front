@@ -1,8 +1,8 @@
-from functools import wraps
+from core.auth import get_user_from_token, oauth2_scheme
 from database.queries import (
     get_db,
-    get_statistics_results,
     get_statistics_prediction,
+    get_statistics_results,
     get_user_id_role,
 )
 from fastapi import APIRouter, Depends, Header
@@ -27,6 +27,36 @@ def get_statistics_orm(
     username: str = Header(None),
 ):
     _, id_role, _ = get_user_id_role(db, username)
+
+    results = get_statistics_results(db, request, id_role)
+    predictions = get_statistics_prediction(db, request, id_role)
+    return {
+        "last_hour": [
+            {
+                "minute": result.minute,
+                "total_capacity": result.total_capacity,
+            }
+            for result in results
+        ],
+        "prediction": [
+            {
+                "minute": prediction.minute,
+                "total_capacity": prediction.total_capacity,
+            }
+            for prediction in predictions
+        ],
+    }
+
+
+@router.post("/last_hour_info", response_model=StatisticResponse)
+def get_statistics_orm_(
+    request: StatisticRequest,
+    db: Session = Depends(get_db),
+    # username: str = Header(None),
+    token: str = Depends(oauth2_scheme),
+):
+    user = get_user_from_token(token, db)
+    _, id_role, _ = get_user_id_role(db, user.username)
 
     results = get_statistics_results(db, request, id_role)
     predictions = get_statistics_prediction(db, request, id_role)
