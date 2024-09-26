@@ -9,6 +9,7 @@ from predictor import predict_capacity
 async def main():
     while True:
         try:
+            print(USER_,PASSWORD_,HOST_,PORT_,DB_)
             pool = await aiomysql.create_pool(user=USER_, password=PASSWORD_, host=HOST_, port=PORT_, db=DB_)
             async with pool.acquire() as connection:
                 async with connection.cursor(aiomysql.DictCursor) as cursor:

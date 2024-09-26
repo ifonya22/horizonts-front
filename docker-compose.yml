@@ -11,6 +11,7 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       TIMEZONE: "Europe/Moscow"
+      ORIGINS: 
     networks:
       - test_conn
 
@@ -55,6 +56,11 @@ services:
       - db
     environment:
       - TZ=Europe/Moscow
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
     command: ["sh", "-c", "sleep 15 && poetry run python main.py"]
     networks:
       - test_conn

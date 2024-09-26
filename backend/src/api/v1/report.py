@@ -28,24 +28,29 @@ async def read_items(request: Report):
         )
     return "NO DATA"
 
+
 from datetime import timedelta, date
 from pydantic import BaseModel
 from typing import List, Tuple
 
+
 class ReportItem(BaseModel):
     workshop_name: str
-    event_date: date 
-    event_time_start: str      
-    value: int       
-    id_obj: int      
-    status: str  
-    
+    event_date: date
+    event_time_start: str
+    value: int
+    id_obj: int
+    status: str
+
 
 class ReportResponse(BaseModel):
     data: List[ReportItem]
 
+
 @router.post("/history")
-async def get_history(request: Report, db: Session = Depends(get_db)) -> ReportResponse:
+async def get_history(
+    request: Report, db: Session = Depends(get_db)
+) -> ReportResponse:
     result = get_history_sql(
         db=db,
         objects=request.objects,
@@ -56,7 +61,14 @@ async def get_history(request: Report, db: Session = Depends(get_db)) -> ReportR
     )
 
     report_items = []
-    for workshop_name, event_date, event_time_start, value, id_obj, status in result:
+    for (
+        workshop_name,
+        event_date,
+        event_time_start,
+        value,
+        id_obj,
+        status,
+    ) in result:
         report_item = ReportItem(
             workshop_name=workshop_name,
             event_date=event_date,

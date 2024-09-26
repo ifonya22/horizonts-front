@@ -512,7 +512,7 @@ def get_history_sql(
     date_end: str,
     time_end: str,
 ):
-    placeholders = ', '.join([f":obj_{i}" for i in range(len(objects))])
+    placeholders = ", ".join([f":obj_{i}" for i in range(len(objects))])
     sql = """
     SELECT workshops.name, date_stc, TIME_FORMAT(statistics.time_stc, '%H:%i:%s') AS time_stc, power_stc, id_obj_stc, type_stc
     FROM statistics
@@ -523,9 +523,7 @@ def get_history_sql(
     AND time_stc BETWEEN "00:00:00" AND "23:59:59"
     """
 
-    
-
-    sql = sql.replace(':objects', f'({placeholders})')
+    sql = sql.replace(":objects", f"({placeholders})")
 
     params = {
         "date_start": date_start,
@@ -535,7 +533,7 @@ def get_history_sql(
     }
 
     for i, obj in enumerate(objects):
-        params[f'obj_{i}'] = obj
+        params[f"obj_{i}"] = obj
 
     data = db.execute(
         text(sql),

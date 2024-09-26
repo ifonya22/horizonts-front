@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,7 +13,10 @@ app = FastAPI(
     servers=[{"url": f"http://173.17.10.123:{PORT}"}],
 )
 
-allow_origins = ["*"]
+ORIGINS = os.getenv("ORIGINS", "").split(",")
+
+
+allow_origins = [ORIGINS]
 
 app.add_middleware(
     CORSMiddleware,
