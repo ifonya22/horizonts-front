@@ -6,8 +6,10 @@ services:
     container_name: horizons_web_back
     depends_on:
       - db
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: "mysql+pymysql://user:userpassword@db:3306/horizons_stat"
+      DATABASE_URL: ${DATABASE_URL}
       TIMEZONE: "Europe/Moscow"
     networks:
       - test_conn
@@ -15,14 +17,14 @@ services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: horizons_stat
-      MYSQL_USER: user
-      MYSQL_PASSWORD: userpassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "8888:3306"
     volumes:
-      - db_data_new_:/var/lib/mysql
+      - tmk_db_data:/var/lib/mysql
     networks:
       - test_conn
 
@@ -32,21 +34,17 @@ services:
       - "8070:80"
     environment:
       PMA_HOST: db
-      PMA_USER: user
-      PMA_PASSWORD: userpassword
+      PMA_USER: ${PMA_USER}
+      PMA_PASSWORD: ${PMA_PASSWORD}
     networks:
-      - test_conn  # Подключаем к сети
+      - test_conn
 
   frontend:
     build:
       context: ./horizonts
-      args:
-        VITE_API_URL: "http://backend:8000/api"
     container_name: horizons_web_front
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=http://backend:8000/api
     networks:
       - test_conn
 
@@ -74,7 +72,7 @@ services:
       - test_conn
 
 volumes:
-  db_data_new_: 
+  tmk_db_data: 
 
 networks:
   test_conn:
