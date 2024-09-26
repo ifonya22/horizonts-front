@@ -3,7 +3,7 @@ from database.queries import (
     get_workshop_by_workshop_id,
     get_workshops_list,
 )
-
+from fastapi.logger import logger
 
 example_data = {
     "shops": [
@@ -59,14 +59,13 @@ example_data = {
     ]
 }
 
-from fastapi.logger import logger
-
 
 def get_workshops_data(firm_id: int, db, id_role, workshop_id):
     data = {"shops": []}
     if id_role == 3:
         workshop = get_workshop_by_workshop_id(db, workshop_id)
         # logger.warning(f"qqqqqqqqqqqq {workshop}")
+
         data["shops"].append(
             {
                 "id": workshop[0][0],
@@ -80,16 +79,13 @@ def get_workshops_data(firm_id: int, db, id_role, workshop_id):
                         "criticalEvents": equip["criticalEvents"],
                         "data": equip["data"],
                     }
-                    for equip in get_equipments_list(
-                        db, workshop_id=workshop[0]
-                    )
+                    for equip in get_equipments_list(db, workshop_id=workshop[0])
                 ],
             }
         )
         return data
 
     for workshop in get_workshops_list(db, firm_id=firm_id):
-
         data["shops"].append(
             {
                 "id": workshop[0],
@@ -103,9 +99,7 @@ def get_workshops_data(firm_id: int, db, id_role, workshop_id):
                         "criticalEvents": equip["criticalEvents"],
                         "data": equip["data"],
                     }
-                    for equip in get_equipments_list(
-                        db, workshop_id=workshop[0]
-                    )
+                    for equip in get_equipments_list(db, workshop_id=workshop[0])
                 ],
             }
         )
@@ -115,5 +109,5 @@ def get_workshops_data(firm_id: int, db, id_role, workshop_id):
 
 def get_workshop_data(firm_id: int, workshop_id: int, db):
     res = get_equipments_list(db, workshop_id=workshop_id)
-    logger.warning(res)
+    # logger.warning(res)
     return res

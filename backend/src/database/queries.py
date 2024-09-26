@@ -366,6 +366,23 @@ def get_workshops_list(db, firm_id: int):
     return workshops
 
 
+def get_workshops_list_sorted(
+    db, firm_id: int, user_id: int, workshop_id: int
+):
+    sql = """
+    SELECT workshops.id, workshops.name, workshops.firm_id
+    FROM workshops
+    JOIN users ON users.id_workshop = workshops.id
+    WHERE workshops.id = :workshop_id
+    AND users.id = :user_id
+
+    """
+    workshops = db.execute(
+        text(sql), {"user_id": user_id, "workshop_id": workshop_id}
+    )
+    return workshops
+
+
 def get_equipments_list_by_workshop_id(db, workshop_id: int):
     sql = """
     SELECT * FROM `objects` WHERE workshop_id = :workshop_id
@@ -539,5 +556,5 @@ def get_history_sql(
         text(sql),
         params,
     ).fetchall()
-    logger.warning(f"qaqedqwdqweqd {data}")
+    # logger.warning(f"qaqedqwdqweqd {data}")
     return data

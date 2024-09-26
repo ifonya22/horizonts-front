@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import DataDayCard from "../components/DataDayCard";
 import CriticalEventCard from "../components/CriticalEventCard";
 import MainGraphic from "../components/MainGraphic";
-import EquipmentData from "../components/EquipmentData";
 import FactoryButton from "../components/FactoryButton";
 import LeftMenu from "../components/LeftMenu";
 import EquipmentStatus from "../components/EquipmentStatus";
@@ -14,6 +13,7 @@ const { Title } = Typography;
 
 import { Menu, Dropdown, Button, Space, message, Typography } from 'antd';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
+import ReloadButton from "../components/ReloadButton";
 
 
 
@@ -38,6 +38,7 @@ const Statistic = () => {
           <div className="mx-10 flex gap-4">
             <Title level={2}>Статистика</Title>
             <FactoryButton onSelect={handleFactorySelect} />
+            
           </div>
         </div>
         <div className="pl-20">
@@ -55,6 +56,9 @@ const Statistic = () => {
         </div>
       </div>
       <div style={{ marginTop: "200px", marginLeft: "50px" }}>
+      <div>
+            <ReloadButton/>
+            </div>
         <EquipmentStatus factoryId={selectedFactoryId}/>
       </div>
     </div>
