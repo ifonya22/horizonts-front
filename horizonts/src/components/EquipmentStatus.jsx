@@ -5,6 +5,7 @@ import axios from 'axios';
 import EquipmentModal from './EquipmentModal'; 
 
 const { Panel } = Collapse;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const EquipmentStatus = ({factoryId}) => {
   const [selectedShop, setSelectedShop] = useState('Все');
@@ -18,7 +19,7 @@ const EquipmentStatus = ({factoryId}) => {
       if (factoryId) {
       const username = localStorage.getItem('username');
       console.log("ale:", username)
-      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/workshops/`, {headers: {'Username': username}});
+      const result = await axios.get(`http://${apiUrl}/api/v1/firm/${factoryId}/workshops/`, {headers: {'Username': username}});
       setShopsData(result.data.shops);
       setEquipmentData(result.data.shops);}
     };
@@ -32,11 +33,11 @@ const EquipmentStatus = ({factoryId}) => {
     if (shopId === 'Все') {
       const username = localStorage.getItem('username');
       console.log("ale:", username)
-      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/workshops/`, {headers: {'Username': username}});
+      const result = await axios.get(`http://${apiUrl}/api/v1/firm/${factoryId}/workshops/`, {headers: {'Username': username}});
 
       setEquipmentData(result.data.shops);
     } else {
-      const result = await axios.get(`http://localhost:8000/api/v1/firm/${factoryId}/${shopId}`);
+      const result = await axios.get(`http://${apiUrl}/api/v1/firm/${factoryId}/${shopId}`);
       setEquipmentData([result.data]);
     }
   };

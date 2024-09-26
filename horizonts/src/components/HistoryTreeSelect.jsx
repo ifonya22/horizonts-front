@@ -3,6 +3,7 @@ import { TreeSelect } from 'antd';
 import FactoryButton from '../components/FactoryButton';
 import axios from 'axios';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const ObjectsTreeSelect = ({ selectedFactory, onSelect }) => {
   const [treeData, setTreeData] = useState([]);
   const [value, setValue] = useState([]);
@@ -12,7 +13,7 @@ const ObjectsTreeSelect = ({ selectedFactory, onSelect }) => {
 
     const fetchObjects = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/v1/firm/${selectedFactory}/objects_list/`);
+        const response = await axios.get(`http://${apiUrl}/api/v1/firm/${selectedFactory}/objects_list/`);
         setTreeData(response.data);
       } catch (error) {
         console.error('Error fetching objects:', error);

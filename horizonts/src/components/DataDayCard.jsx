@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Space, Spin } from 'antd';
+
+const apiUrl = import.meta.env.VITE_API_URL;
 const DataDayCard = ({ factoryId }) => {
   const [data, setData] = useState(null);
 
@@ -7,7 +9,7 @@ const DataDayCard = ({ factoryId }) => {
     const fetchData = async () => {
       console.log('Factory ID:', factoryId);
       if (factoryId) {
-        const response = await fetch(`http://localhost:8000/api/v1/firm/${factoryId}`); // Замените на ваш URL
+        const response = await fetch(`http://${apiUrl}/api/v1/firm/${factoryId}`); // Замените на ваш URL
       const result = await response.json();
       setData(result);
       }

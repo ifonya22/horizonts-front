@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Space } from 'antd';
 
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const CriticalEventCard = ({ factoryId }) =>  {
   const [data, setData] = useState({ start_stu: [], end_stu: [], is_notified_stu: [] });
 
   useEffect(() => {
     const fetchData = async () => {
       if (factoryId) {
-      const response = await fetch(`http://localhost:8000/api/v1/firm/${factoryId}/critical`); 
+      const response = await fetch(`http://${apiUrl}/api/v1/firm/${factoryId}/critical`); 
       const result = await response.json();
       setData(result);
       }

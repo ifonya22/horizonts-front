@@ -4,6 +4,7 @@ import { CloseOutlined } from '@ant-design/icons';
 // import { useNavigate } from 'react-router-dom';
 // const navigate = useNavigate();
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const FirmsList = () => {
   const [buttons, setButtons] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -17,7 +18,7 @@ const FirmsList = () => {
       //   window.location.reload();
       //   return;
       // }
-      const response = await fetch('http://localhost:8000/api/v1/firm/get_all_factories/', {headers: {'Username': username}});
+      const response = await fetch(`http://${apiUrl}/api/v1/firm/get_all_factories/`, {headers: {'Username': username}});
       const data = await response.json();
       const combinedButtons = data.short_f.map((short, index) => ({
         short,

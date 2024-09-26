@@ -7,6 +7,7 @@ import History from "./pages/History";
 import Settings from "./pages/Settings";
 import Login from './pages/Login';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const { Content } = Layout;
 
 const App = () => {
@@ -34,7 +35,7 @@ const App = () => {
     if (isAuthenticated) {
       const fetchUserData = async () => {
         try {
-          const response = await fetch('http://localhost:8000/api/v1/auth/users/me', {
+          const response = await fetch(`http://${apiUrl}/api/v1/auth/users/me`, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
             },

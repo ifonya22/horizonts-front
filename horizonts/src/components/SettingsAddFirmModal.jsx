@@ -3,7 +3,7 @@ import { Modal, Button, Input, Tabs, Form, message } from 'antd';
 import axios from 'axios';
 
 const { TabPane } = Tabs;
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const SettingsAddFirmModal = ({ isVisible, onClose }) => {
   const [form] = Form.useForm();
   const [workshops, setWorkshops] = useState([{ key: '1', name: '', equipment: [] }]);
@@ -54,7 +54,7 @@ const SettingsAddFirmModal = ({ isVisible, onClose }) => {
       };
 
       // Отправка данных на сервер
-      await axios.post('http://localhost:8000/api/v1/firm/add', payload, {
+      await axios.post(`http://${apiUrl}/api/v1/firm/add`, payload, {
         headers: {
           'Content-Type': 'application/json',
         },

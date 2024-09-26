@@ -9,10 +9,10 @@ app = FastAPI(
     title="Horizonts",
     description="Horizonts API",
     version="0.5.1",
-    servers=[{"url": f"http://localhost:{PORT}"}],
+    servers=[{"url": f"http://173.17.10.123:{PORT}"}],
 )
 
-allow_origins = ["http://localhost:3000"]
+allow_origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,

@@ -14,6 +14,6 @@ docker compose down
 ### Ссылки:
 ```
 фронт http://localhost:3000/
-бэкенд http://localhost:8000/
+бэкенд http://${apiUrl}/
 база данных http://localhost:8080/
 ```

@@ -3,6 +3,10 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, message } from 'antd';
 import axios from 'axios';
 
+
+const apiUrl = import.meta.env.VITE_API_URL;
+console.log('API URL:', import.meta.env.VITE_API_URL);
+
 const Login = ({ setIsAuthenticated, setUserFullName }) => {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState(() => {
@@ -14,7 +18,7 @@ const Login = ({ setIsAuthenticated, setUserFullName }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/auth/token', new URLSearchParams({
+      const response = await axios.post(`http://${apiUrl}/api/v1/auth/token`, new URLSearchParams({
         grant_type: 'password',
         username: username,
         password: password,
@@ -31,7 +35,7 @@ const Login = ({ setIsAuthenticated, setUserFullName }) => {
         const { access_token } = response.data;
         localStorage.setItem('access_token', access_token);
 
-        const userResponse = await axios.get('http://localhost:8000/api/v1/auth/users/me', {
+        const userResponse = await axios.get(`http://${apiUrl}/api/v1/auth/users/me`, {
           headers: {
             'Authorization': `Bearer ${access_token}`,
           },

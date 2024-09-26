@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Dropdown, message, Space } from 'antd';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const handleMenuClick = (key, label, setSelectedFactory, onSelect) => {
     message.info(`Выбрано: ${label}`);
     setSelectedFactory(label);
@@ -16,7 +17,7 @@ const handleMenuClick = (key, label, setSelectedFactory, onSelect) => {
       const fetchFactories = async () => {
         try {
           const username = localStorage.getItem('username');
-          const response = await fetch('http://localhost:8000/api/v1/firm/get_all_factories/', {headers: {'Username': username}});
+          const response = await fetch(`http://${apiUrl}/api/v1/firm/get_all_factories/`, {headers: {'Username': username}});
           const data = await response.json();
   
           if (data.id_f.length > 0) {

@@ -2,64 +2,80 @@ version: '3.8'
 
 services:
   backend:
-    image: horizonts-front-backend
+    build: ./backend
     container_name: horizons_web_back
-    ports:
-      - "8000:8000"
     depends_on:
       - db
     environment:
-      DATABASE_URL: "mysql+pymysql://user_vivobook:$XaKeR$iDi$gUlYay$1110@db:3306/horizons_stat"
-      # TIMEZONE: "Asia/Yekaterinburg"
+      DATABASE_URL: "mysql+pymysql://user:userpassword@db:3306/horizons_stat"
       TIMEZONE: "Europe/Moscow"
+    networks:
+      - test_conn
 
   db:
     image: mysql:8.0
-    # restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: YBHNnjksajanfuQa!
+      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: horizons_stat
-      MYSQL_USER: user_vivobook
-      MYSQL_PASSWORD: $XaKeR$iDi$gUlYay$1110
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
     ports:
       - "8888:3306"
     volumes:
       - db_data_new_:/var/lib/mysql
+    networks:
+      - test_conn
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    # restart: always
     ports:
       - "8070:80"
     environment:
       PMA_HOST: db
-      PMA_USER: user_vivobook
-      PMA_PASSWORD: $XaKeR$iDi$gUlYay$1110
+      PMA_USER: user
+      PMA_PASSWORD: userpassword
+    networks:
+      - test_conn  # Подключаем к сети
 
   frontend:
-    image: horizonts-front-frontend
+    build:
+      context: ./horizonts
+      args:
+        VITE_API_URL: "http://backend:8000/api"
     container_name: horizons_web_front
-    ports:
-      - "3000:5000"
     depends_on:
       - backend
+    environment:
+      - VITE_API_URL=http://backend:8000/api
+    networks:
+      - test_conn
 
   db_filler:
-    image: horizonts-front-db_filler
+    build: ./scripts
     container_name: horizons_db_filler
     depends_on:
       - db
     environment:
       - TZ=Europe/Moscow
     command: ["sh", "-c", "sleep 15 && poetry run python main.py"]
+    networks:
+      - test_conn
 
-  # nginx:
-  #   build: ./nginx
-  #   container_name: horizons_web_nginx
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - frontend
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - test_conn
 
 volumes:
-  db_data_new_:
+  db_data_new_: 
+
+networks:
+  test_conn:
+    driver: bridge

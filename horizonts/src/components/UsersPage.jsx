@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, List, Space } from 'antd';
 import axios from 'axios';
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const UsersPage = () => {
   const [admins, setAdmins] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -9,7 +9,7 @@ const UsersPage = () => {
   const [newEmployee, setNewEmployee] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/v1/users/')
+    axios.get(`http://${apiUrl}/api/v1/users/`)
       .then(response => {
         setAdmins(response.data.users.admins);
         setEmployees(response.data.users.employees);

@@ -6,6 +6,7 @@ import HistoryTable from "../components/HistoryTable"; // Import the table compo
 import dayjs from 'dayjs';
 import axios from 'axios';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
 
@@ -28,7 +29,7 @@ const History = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/report/history', filterRequestData);
+      const response = await axios.post(`http://${apiUrl}/api/v1/report/history`, filterRequestData);
       setReportData(response.data.data); // Update the report data with the response
     } catch (error) {
       console.error('Error applying filters:', error);
@@ -49,7 +50,7 @@ const History = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/report/', reportRequestData, {
+      const response = await axios.post(`http://${apiUrl}/api/v1/report/`, reportRequestData, {
         responseType: 'blob', // Set response type for downloading file
       });
 

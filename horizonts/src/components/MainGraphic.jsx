@@ -15,6 +15,7 @@ import { DatePicker, message } from "antd";
 const { RangePicker } = DatePicker;
 import { Typography } from "antd";
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const { Title } = Typography;
 
 // Регистрируем все необходимые компоненты Chart.js
@@ -41,7 +42,7 @@ const fetchData = async (factoryId) => {
     console.log(formattedDate);
 
     const response = await fetch(
-      "http://localhost:8000/api/v1/statistic/last_hour",
+      `http://${apiUrl}/api/v1/statistic/last_hour`,
       {
         method: "POST",
         headers: {
