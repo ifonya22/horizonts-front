@@ -123,11 +123,14 @@ def get_workshops_objects_list(
     firm_id: int, db: Session = Depends(get_db), username: str = Header(None)
 ):
     # logger.warning(f"ooooooooooooooooo{firm_id}")
-    id_user, _, id_workshop = get_user_id_role(db, username)
-    workshops = get_workshops_list_sorted(db, firm_id, id_user, id_workshop)
+    username, _, id_workshop = get_user_id_role(db, username)
+    logger.warning(f"+++++++++++++++++++{username}, {firm_id}, {id_workshop}")
+    workshops = get_workshops_list_sorted(db, firm_id, username, id_workshop)
+    logger.warning(f"+++++++++++++++++++{workshops}")
     result = []
     for workshop in workshops:
         equipments = get_equipments_list_by_workshop_id(db, workshop[0])
+        logger.warning(f"---------------------{equipments}")
         equips = []
         idx = 1
         for equip in equipments:

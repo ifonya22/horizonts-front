@@ -13,7 +13,8 @@ const ObjectsTreeSelect = ({ selectedFactory, onSelect }) => {
 
     const fetchObjects = async () => {
       try {
-        const response = await axios.get(`http://${apiUrl}/api/v1/firm/${selectedFactory}/objects_list/`);
+        const username = localStorage.getItem('username');
+        const response = await axios.get(`http://${apiUrl}/api/v1/firm/${selectedFactory}/objects_list/`, {headers: {'Username': username}});
         setTreeData(response.data);
       } catch (error) {
         console.error('Error fetching objects:', error);

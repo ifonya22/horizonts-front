@@ -367,19 +367,19 @@ def get_workshops_list(db, firm_id: int):
 
 
 def get_workshops_list_sorted(
-    db, firm_id: int, user_id: int, workshop_id: int
+    db, firm_id: int, username: int, workshop_id: int
 ):
     sql = """
     SELECT workshops.id, workshops.name, workshops.firm_id
     FROM workshops
     JOIN users ON users.id_workshop = workshops.id
     WHERE workshops.id = :workshop_id
-    AND users.id = :user_id
+    AND users.username = :username
 
     """
     workshops = db.execute(
-        text(sql), {"user_id": user_id, "workshop_id": workshop_id}
-    )
+        text(sql), {"username": username, "workshop_id": workshop_id}
+    ).fetchall()
     return workshops
 
 
@@ -404,13 +404,13 @@ def get_workshop_by_workshop_id(db, workshop_id: int):
 
 def get_equipments_list(db, workshop_id: int):
     sql = """
-    SELECT id_obj FROM `objects` WHERE workshop_id = :workshop_id
+    SELECT id_obj, serial_number FROM `objects` WHERE workshop_id = :workshop_id
     """
     equipments = db.execute(text(sql), {"workshop_id": workshop_id})
     equipment = [
         {
             "id": equip[0],
-            "name": f"Оборудование {idx + 1}",
+            "name": f"Оборудование SN: {equip[1]}",
             "workTime": get_work_time_by_obj_id(db, equip[0], "Norm"),
             "idleTime": get_work_time_by_obj_id(db, equip[0], "Prost"),
             "criticalEvents": get_ctitical_count_events(db, equip[0]),
@@ -537,7 +537,7 @@ def get_history_sql(
     JOIN workshops ON workshops.id = objects.workshop_id
     WHERE id_obj_stc IN :objects
     AND date_stc BETWEEN :date_start AND :date_end
-    AND time_stc BETWEEN "00:00:00" AND "23:59:59"
+    AND time_stc BETWEEN :time_start AND :time_end
     """
 
     sql = sql.replace(":objects", f"({placeholders})")
